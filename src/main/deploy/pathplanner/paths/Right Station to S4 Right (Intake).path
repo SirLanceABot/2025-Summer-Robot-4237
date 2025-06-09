@@ -1,0 +1,102 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.27,
+        "y": 0.76
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.2611019736842106,
+        "y": 3.207154605263158
+      },
+      "isLocked": false,
+      "linkedName": "Right Station"
+    },
+    {
+      "anchor": {
+        "x": 3.17,
+        "y": 4.0
+      },
+      "prevControl": {
+        "x": 2.3861842105263156,
+        "y": 3.380345394736842
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "S4 Right"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "Slow Zone",
+      "minWaypointRelativePos": 0.85,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.25,
+        "maxAcceleration": 1.25,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Begin Intaking",
+      "waypointRelativePos": 0.01,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake Coral From Station"
+        }
+      }
+    },
+    {
+      "name": "Move Scorer to L4",
+      "waypointRelativePos": 0.15,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Move Scorer to L4"
+        }
+      }
+    },
+    {
+      "name": "Score Coral Prox",
+      "waypointRelativePos": 0.92,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Score Coral Prox"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 6.0,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "Right Station Starts",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 144.32359177813808
+  },
+  "useDefaultConstraints": false
+}

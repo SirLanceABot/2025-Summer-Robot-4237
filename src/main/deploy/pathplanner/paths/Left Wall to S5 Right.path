@@ -1,0 +1,77 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.16625,
+        "y": 5.48
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.537999999999999,
+        "y": 5.32375
+      },
+      "isLocked": false,
+      "linkedName": "Left Wall"
+    },
+    {
+      "anchor": {
+        "x": 3.855,
+        "y": 5.185
+      },
+      "prevControl": {
+        "x": 4.665749999999999,
+        "y": 6.12625
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "S5 Right"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Move Scorer To L4",
+      "waypointRelativePos": 0.1,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Move Scorer To L4"
+        }
+      }
+    },
+    {
+      "name": "Eject Coral On L4",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Score Coral Only"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 29.999999999999996
+  },
+  "reversed": false,
+  "folder": "Left Wall Starts",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}

@@ -1,0 +1,103 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Mid to S2 Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral Prox"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2 Left to Right Station (No Algae)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Station to S3 Right with Algae"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral Prox"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Remove Lower Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3 Right to Right Station"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Station to S3 Right (L3)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral Prox"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3 Right to Right Station"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Station to S3 Left (L3)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral Prox"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

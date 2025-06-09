@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.864,
+        "y": 2.717
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.127713815789473,
+        "y": 1.7061677631578946
+      },
+      "isLocked": false,
+      "linkedName": "S2 Right"
+    },
+    {
+      "anchor": {
+        "x": 1.27,
+        "y": 0.76
+      },
+      "prevControl": {
+        "x": 2.6155,
+        "y": 1.4519999999999993
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Right Station"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Coral From Station",
+      "waypointRelativePos": 0.15,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake Coral From Station"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 6.0,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 144.32359177813808
+  },
+  "reversed": false,
+  "folder": "Reef Starts",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -150.0
+  },
+  "useDefaultConstraints": false
+}
