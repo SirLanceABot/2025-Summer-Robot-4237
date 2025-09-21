@@ -13,35 +13,32 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 /**
- * This class could be used this way:
+ * Log Command Scheduler actions for command initialize, execute, interrupt, finish
+ * <p>This class could be used this way:
  *
-//   // options for logging
-//   private boolean useConsole            = false;
-//   private boolean useDataLog            = true;
-//   private boolean useShuffleBoardLog    = false;
+<pre><code>
+  // options for logging
+  private boolean useConsole            = false;
+  private boolean useDataLog            = true;
+  private boolean useShuffleBoardLog    = false;
 
-//     /* There are thousands of ways to do logging.
-//      * Here are 3 ways with options within the method.
-//      /
-//     configureCommandLogs(); // do early on otherwise log not ready for first commands
+  configureCommandLogs(); // do early on otherwise log not ready for first commands
 
-// /**
-//    * Configure Command logging to Console/Terminal, DataLog, or ShuffleBoard
-//    /
-//   @SuppressWarnings("resource")
-//   public void configureCommandLogs()
-//   {
-//       if (useConsole || useDataLog || useShuffleBoardLog) {
-//         schedulerLog = new CommandSchedulerLog(useConsole, useDataLog, useShuffleBoardLog);
-//         schedulerLog.logCommandInitialize();
-//         schedulerLog.logCommandInterrupt();
-//         schedulerLog.logCommandFinish();
-//         schedulerLog.logCommandExecute();  // Can (optionally) generate a lot of output        
-//       }
-//       else {
-//         new Alert("No logging", AlertType.kWarning).set(true);
-//       }
-//   }
+  @SuppressWarnings("resource")
+  public void configureCommandLogs()
+  {
+      if (useConsole || useDataLog || useShuffleBoardLog) {
+        schedulerLog = new CommandSchedulerLog(useConsole, useDataLog, useShuffleBoardLog);
+        schedulerLog.logCommandInitialize();
+        schedulerLog.logCommandInterrupt();
+        schedulerLog.logCommandFinish();
+        schedulerLog.logCommandExecute();  // Can (optionally) generate a lot of output        
+      }
+      else {
+        new Alert("No logging", AlertType.kWarning).set(true);
+      }
+  }
+</code></pre>
  */
 public class CommandSchedulerLog 
 {
@@ -72,7 +69,7 @@ public class CommandSchedulerLog
      * Convert recording to csv and they show nicely in Excel.
      * 
      * <p>If using DataLog tool, the recording is via NT so tell NT to send EVERYTHING to the DataLog.
-     * Run DataLog tool to retrieve log from roboRIO and convert the log to csv.
+     * Run DataLog tool to retrieve log from roboRIO and convert the log to a csv table.
      * 
      * <p>Note the comment in execute logging that only the first execute is logged unless changed.
      * 
@@ -115,13 +112,13 @@ public class CommandSchedulerLog
                     .map(subsystem -> subsystem.getClass().getSimpleName())
                     .collect(Collectors.joining(", ", "{", "}"));
 
-                if(m_useConsole) {
+                if (m_useConsole) {
                     System.out.println("Command initialized : " + key + " " + requirements);                    
                 }
-                if(m_useDataLog) {
+                if (m_useDataLog) {
                     m_initializeCommandLogEntry.set(key + " " + requirements);                    
                 }
-                if(m_useShuffleBoardLog) {
+                if (m_useShuffleBoardLog) {
                     Shuffleboard.addEventMarker("Command initialized",
                         key + " " + requirements, EventImportance.kNormal);                    
                 }
@@ -137,19 +134,27 @@ public class CommandSchedulerLog
     public void logCommandInterrupt()
     {
         CommandScheduler.getInstance().onCommandInterrupt(
-            (command) ->
+            (command, interruptedBy) ->
             {
-                String key = command.getClass().getSimpleName() + "/" + command.getName();
-                String runs = " after " + m_currentCommands.getOrDefault(key, 0) + " runs";
-
-                if(m_useConsole) {
-                    System.out.println("Command interrupted : " + key + runs);                    
+                String interrupter;
+                if (interruptedBy.isPresent()) {
+                    interrupter =  "interrupted by command " + command.getClass().getSimpleName() + "/" + interruptedBy.get().getName();
                 }
-                if(m_useDataLog) {
+                else {
+                    interrupter = "interrupted"; // interrupted not by a command - mode change, cancelled, timeOut, until, etc.
+                }
+
+                String key = command.getClass().getSimpleName() + "/" + command.getName();
+                String runs = " after " + m_currentCommands.getOrDefault(key, 0) + " runs " + interrupter;
+
+                if (m_useConsole) {
+                    System.out.println(key + runs);                    
+                }
+                if (m_useDataLog) {
                     m_interruptCommandLogEntry.set(key + runs);                    
                 } 
-                if(m_useShuffleBoardLog) {
-                    Shuffleboard.addEventMarker("Command interrupted", key, EventImportance.kNormal);
+                if (m_useShuffleBoardLog) {
+                    Shuffleboard.addEventMarker("Command interrupted", key + runs, EventImportance.kNormal);
                 }
 
                 m_currentCommands.put(key, 0);
@@ -168,13 +173,13 @@ public class CommandSchedulerLog
                 String key = command.getClass().getSimpleName() + "/" + command.getName();
                 String runs = " after " + m_currentCommands.getOrDefault(key, 0) + " runs";
 
-                if(m_useConsole) {
+                if (m_useConsole) {
                     System.out.println("Command finished : " + key + runs);                    
                 }
-                if(m_useDataLog) {
+                if (m_useDataLog) {
                     m_finishCommandLogEntry.set(key + runs);                    
                 } 
-                if(m_useShuffleBoardLog) {
+                if (m_useShuffleBoardLog) {
                     Shuffleboard.addEventMarker("Command finished", key, EventImportance.kNormal);                    
                 }
 
@@ -198,15 +203,15 @@ public class CommandSchedulerLog
             {
                 String key = command.getClass().getSimpleName() + "/" + command.getName();
 
-                if(m_currentCommands.getOrDefault(key, 0) == 0) // suppress all but first execute
+                if (m_currentCommands.getOrDefault(key, 0) == 0) // suppress all but first execute
                 {
-                    if(m_useConsole) {
+                    if (m_useConsole) {
                         System.out.println("Command executed : " + key);                        
                     }
-                    if(m_useDataLog) {
+                    if (m_useDataLog) {
                         m_executeCommandLogEntry.set(key);             
                     }
-                    if(m_useShuffleBoardLog) {
+                    if (m_useShuffleBoardLog) {
                         Shuffleboard.addEventMarker("Command executed", key, EventImportance.kNormal);                        
                     }
 
