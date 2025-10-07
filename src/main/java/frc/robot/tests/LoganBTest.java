@@ -23,6 +23,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.Sonic;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
 import frc.robot.subsystems.IntakeWrist.Position;
 import frc.robot.subsystems.LEDs.ColorPattern;
@@ -58,6 +59,7 @@ public class LoganBTest implements Test
     private final Claw claw;
     private final Elevator elevator;
     private final PoseEstimator poseEstimator;
+    private final Sonic sonic;
     private final Camera climbSideLimelight;
     private final Camera scoringSideLimelight;
     private final Joystick joystick = new Joystick(0);
@@ -83,6 +85,7 @@ public class LoganBTest implements Test
         intakeWrist = robotContainer.getIntakeWrist();
         claw = robotContainer.getClaw();
         elevator = robotContainer.getElevator();
+        sonic = robotContainer.getSonic();
         poseEstimator = robotContainer.getPoseEstimator();
         climbSideLimelight = robotContainer.getClimbSideCamera();
         scoringSideLimelight = robotContainer.getScoringSideCamera();
@@ -114,106 +117,126 @@ public class LoganBTest implements Test
     {
         if(joystick.getRawButton(1))
         {
-            // IntakingCommands.intakeCoralFromStationCommand().schedule();
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kIntakingPosition).schedule();
-            // claw.shootCoral();
-            // intake.set(0.5);
-            // IntakingCommands.intakeCoralCommand().schedule();
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kL4).schedule();
-            // elevator.set(0.1);
-            // intakeWrist.moveToSetPositionCommand(Position.kRestingPosition).schedule();
-            // intakeWrist.set(0.2);
-            // IntakingCommands.intakeCoralCommand().schedule();
-            // GeneralCommands.testgrabbingFromIntakeCommand().schedule();
-            // pivot.set(0.1);
-            // claw.grabGamePiece();
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kSafeSwingPosition).schedule();
-            // GeneralCommands.moveScorerToIntakingPositionCommand().schedule();
-            // pivot.set(0.1);
-            // GeneralCommands.moveScorerToL1Command().schedule();
-            // climb.set(0.3);
-            // IntakingCommands.intakeAlgaeFromReefCommand(TargetPosition.kLowerReefAlgae).schedule();
-            claw.setStickSpeed(0.025);
+            sonic.setFirst(1);
         }
         else if(joystick.getRawButton(2))
         {
-            // GeneralCommands.moveScorerToL4Command().schedule();
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kL2).schedule();
-            // elevator.set(0.2);
-            // intake.set(-0.5);
-            // ScoringCommands.flipScorerCommand().schedule();
-            // IntakingCommands.intakeAlgaeFromReefCommand(TargetPosition.kUpperReefAlgae).schedule();
-            // ScoringCommands.flipScorerCommand().schedule();
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kL2).schedule();
-            // elevator.set(-0.1);
-            // intakeWrist.moveToSetPositionCommand(Position.kIntakeCoralPosition).schedule();
-            // intakeWrist.set(-0.2);
-            // pivot.moveToSetPositionCommand(PivotPosition.kDownPosition).schedule();
-            // pivot.set(-0.1);
-            // GeneralCommands.testGrabAndFlipCommand().schedule();
-            // pivot.set(0.2);
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kL4).schedule();
-            // elevator.set(-0.2);
-            // pivot.set(-0.1);
-            // GeneralCommands.moveScorerToL2Commmand().schedule();
-            // climb.set(-0.3);
-            claw.setStickSpeed(-0.1);
+            sonic.setSecond(1);
         }
         else if(joystick.getRawButton(3))
         {
-            claw.moveStickToSetPosition(0);
-            // GeneralCommands.scoreCoralOnlyCommand().schedule();
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kL3).schedule();
-            // GeneralCommands.moveScorerToBargeCommand().schedule();
-            // pivot.moveToSetPositionCommand(PivotPosition.kFlippedPosition).schedule();
-            // elevator.set(-0.2);
-            // elevator.set(0.2);
-            // pivot.set(0.1);
-            // intake.pickupCoral();
-            // pivot.set(-0.2);
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kReadyToGrabCoralPosition).schedule();
-            // GeneralCommands.moveScorerToL3Command().schedule();
+            sonic.firstOn();
         }
         else if(joystick.getRawButton(4))
         {
-            claw.moveStickToSetPosition(1.8);
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kIntakingPosition).until(elevator.isAtPosition(ElevatorPosition.kIntakingPosition)).withTimeout(1.0).schedule();            // elevator.moveToSetPositionCommand(ElevatorPosition.kL4).schedule();
-            // ScoringCommands.testHoldAlgaeCommand().schedule();
-            // GeneralCommands.moveScorerToProcessorCommand().schedule();
-            // pivot.moveToSetPositionCommand(PivotPosition.kHoldAlgaePosition).schedule();
-            // pivot.set(-0.1);
-            // intake.pickupAlgae();
-            // elevator.set(-0.2);
-            // GeneralCommands.moveScorerToL4Command().schedule();
-        }
-        else if(joystick.getRawButton(5))
-        {
-            claw.setStickPosition(0);
-            // claw.shootCoralCommand().schedule();
-            // elevator.moveToSetPositionCommand(ElevatorPosition.kScoreProcessorPosition).schedule();
-            // claw.placeCoral();
-            // GeneralCommands.moveScorerToIntakingPositionCommand().schedule();
-        }
-        else if(joystick.getRawButton(6))
-        {
-            // claw.grabGamePiece();
-            // ScoringCommands.flipScorerCommand().schedule();
+            sonic.secondOn();
         }
         else
         {
-            // elevator.stopCommand().schedule();
-            // pivot.stopCommand().schedule();
-            // claw.stopCommand().schedule();
-            // pivot.stop();
-            // climb.stop();
-            // claw.stop();
-            // pivot.stop();
-            // elevator.stop();
-            // intake.stop();
-            // claw.stopCommand().schedule();
-            claw.stopStick();
+            sonic.off();
         }
-        System.out.println("Stick pos: " + claw.getStickPosition());
+        // if(joystick.getRawButton(1))
+        // {
+        //     // IntakingCommands.intakeCoralFromStationCommand().schedule();
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kIntakingPosition).schedule();
+        //     // claw.shootCoral();
+        //     // intake.set(0.5);
+        //     // IntakingCommands.intakeCoralCommand().schedule();
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kL4).schedule();
+        //     // elevator.set(0.1);
+        //     // intakeWrist.moveToSetPositionCommand(Position.kRestingPosition).schedule();
+        //     // intakeWrist.set(0.2);
+        //     // IntakingCommands.intakeCoralCommand().schedule();
+        //     // GeneralCommands.testgrabbingFromIntakeCommand().schedule();
+        //     // pivot.set(0.1);
+        //     // claw.grabGamePiece();
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kSafeSwingPosition).schedule();
+        //     // GeneralCommands.moveScorerToIntakingPositionCommand().schedule();
+        //     // pivot.set(0.1);
+        //     // GeneralCommands.moveScorerToL1Command().schedule();
+        //     // climb.set(0.3);
+        //     // IntakingCommands.intakeAlgaeFromReefCommand(TargetPosition.kLowerReefAlgae).schedule();
+        //     claw.setStickSpeed(0.025);
+        // }
+        // else if(joystick.getRawButton(2))
+        // {
+        //     // GeneralCommands.moveScorerToL4Command().schedule();
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kL2).schedule();
+        //     // elevator.set(0.2);
+        //     // intake.set(-0.5);
+        //     // ScoringCommands.flipScorerCommand().schedule();
+        //     // IntakingCommands.intakeAlgaeFromReefCommand(TargetPosition.kUpperReefAlgae).schedule();
+        //     // ScoringCommands.flipScorerCommand().schedule();
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kL2).schedule();
+        //     // elevator.set(-0.1);
+        //     // intakeWrist.moveToSetPositionCommand(Position.kIntakeCoralPosition).schedule();
+        //     // intakeWrist.set(-0.2);
+        //     // pivot.moveToSetPositionCommand(PivotPosition.kDownPosition).schedule();
+        //     // pivot.set(-0.1);
+        //     // GeneralCommands.testGrabAndFlipCommand().schedule();
+        //     // pivot.set(0.2);
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kL4).schedule();
+        //     // elevator.set(-0.2);
+        //     // pivot.set(-0.1);
+        //     // GeneralCommands.moveScorerToL2Commmand().schedule();
+        //     // climb.set(-0.3);
+        //     claw.setStickSpeed(-0.1);
+        // }
+        // else if(joystick.getRawButton(3))
+        // {
+        //     claw.moveStickToSetPosition(0);
+        //     // GeneralCommands.scoreCoralOnlyCommand().schedule();
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kL3).schedule();
+        //     // GeneralCommands.moveScorerToBargeCommand().schedule();
+        //     // pivot.moveToSetPositionCommand(PivotPosition.kFlippedPosition).schedule();
+        //     // elevator.set(-0.2);
+        //     // elevator.set(0.2);
+        //     // pivot.set(0.1);
+        //     // intake.pickupCoral();
+        //     // pivot.set(-0.2);
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kReadyToGrabCoralPosition).schedule();
+        //     // GeneralCommands.moveScorerToL3Command().schedule();
+        // }
+        // else if(joystick.getRawButton(4))
+        // {
+        //     claw.moveStickToSetPosition(1.8);
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kIntakingPosition).until(elevator.isAtPosition(ElevatorPosition.kIntakingPosition)).withTimeout(1.0).schedule();            // elevator.moveToSetPositionCommand(ElevatorPosition.kL4).schedule();
+        //     // ScoringCommands.testHoldAlgaeCommand().schedule();
+        //     // GeneralCommands.moveScorerToProcessorCommand().schedule();
+        //     // pivot.moveToSetPositionCommand(PivotPosition.kHoldAlgaePosition).schedule();
+        //     // pivot.set(-0.1);
+        //     // intake.pickupAlgae();
+        //     // elevator.set(-0.2);
+        //     // GeneralCommands.moveScorerToL4Command().schedule();
+        // }
+        // else if(joystick.getRawButton(5))
+        // {
+        //     claw.setStickPosition(0);
+        //     // claw.shootCoralCommand().schedule();
+        //     // elevator.moveToSetPositionCommand(ElevatorPosition.kScoreProcessorPosition).schedule();
+        //     // claw.placeCoral();
+        //     // GeneralCommands.moveScorerToIntakingPositionCommand().schedule();
+        // }
+        // else if(joystick.getRawButton(6))
+        // {
+        //     // claw.grabGamePiece();
+        //     // ScoringCommands.flipScorerCommand().schedule();
+        // }
+        // else
+        // {
+        //     // elevator.stopCommand().schedule();
+        //     // pivot.stopCommand().schedule();
+        //     // claw.stopCommand().schedule();
+        //     // pivot.stop();
+        //     // climb.stop();
+        //     // claw.stop();
+        //     // pivot.stop();
+        //     // elevator.stop();
+        //     // intake.stop();
+        //     // claw.stopCommand().schedule();
+        //     claw.stopStick();
+        // }
+        // System.out.println("Stick pos: " + claw.getStickPosition());
         // System.out.println("Elevator Pos: " + elevator.getPosition());
 
 

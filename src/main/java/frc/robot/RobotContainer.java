@@ -17,6 +17,7 @@ import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.Sonic;
 
 public class RobotContainer 
 {
@@ -40,6 +41,7 @@ public class RobotContainer
     private boolean useIntakeWrist          = false;
     private boolean usePivot                = false;
     private boolean useShuttle              = false;
+    private boolean useSonic                = false;
     // private boolean useLEDs                 = false;
 
     private boolean useGyro                 = false;
@@ -66,6 +68,7 @@ public class RobotContainer
     private final IntakeWrist intakeWrist;
     private final Pivot pivot;
     private final LEDs leds;
+    private final Sonic sonic;
 
     private final Camera[] cameraArray = new Camera[2];
     private final PoseEstimator poseEstimator;
@@ -116,6 +119,10 @@ public class RobotContainer
 
         pivot = (usePivot)
                 ? new Pivot()
+                : null;
+
+        sonic = (useSonic)
+                ? new Sonic()
                 : null;
 
         // leds = (useFullRobot || useLEDs)
@@ -191,6 +198,11 @@ public class RobotContainer
     public Elevator getElevator()
     {
         return elevator;
+    }
+
+    public Sonic getSonic()
+    {
+        return sonic;
     }
 
     public Intake getIntake()
