@@ -12,6 +12,7 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.LEDs.ColorPattern;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Sonic;
 import frc.robot.RobotContainer;
 import frc.robot.commands.GeneralCommands;
 import frc.robot.Constants;
@@ -44,6 +45,7 @@ public class RobbieFTest implements Test
     private final Intake intake;
     private final IntakeWrist intakeWrist;
     private final Elevator elevator;
+    private final Sonic sonic;
 
     private final Joystick joystick = new Joystick(0);
     // private final ExampleSubsystem exampleSubsystem;
@@ -65,6 +67,7 @@ public class RobbieFTest implements Test
         intakeWrist = robotContainer.getIntakeWrist();
         elevator = robotContainer.getElevator();
         intake = robotContainer.getIntake();
+        sonic = robotContainer.getSonic();
         // this.exampleSubsystem = robotContainer.exampleSubsystem;
 
         System.out.println("  Constructor Finished: " + fullClassName);
@@ -90,15 +93,13 @@ public class RobbieFTest implements Test
     //  */
     public void periodic()
     {
-        // System.out.println("Position" + elevator.getLeftPosition());
-
         if (joystick.getRawButton(1))
         {
-            GeneralCommands.setLedCommand(ColorPattern.kSolid, Color.kRed).schedule();
+            sonic.setFirst(.1);
         }
         else if (joystick.getRawButton(2))
         {
-            GeneralCommands.setLedCommand(ColorPattern.kSolid, Color.kGreen).schedule();
+            sonic.off();
         }
     }
     
