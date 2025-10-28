@@ -15,6 +15,7 @@ import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -678,6 +679,31 @@ public final class GeneralCommands
 
 
         return AutoBuilder.followPath(path);
+    }
+
+    public static Command driveOnTheFlyCommand(Pose2d currentPose, Pose2d endPose)
+    {
+        PathConstraints constraints = new PathConstraints(0.5, 0.25, Units.degreesToRadians(72), Units.degreesToRadians(72));
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                                    new Pose2d(currentPose.getTranslation(), currentPose.getRotation()),
+                                    new Pose2d(endPose.getTranslation(), endPose.getRotation()));
+        double vxMetersPerSecond = drivetrain.getState().Speeds.vxMetersPerSecond;
+        double vyMetersPerSecond = drivetrain.getState().Speeds.vyMetersPerSecond;
+
+        double velocity = Math.hypot(vxMetersPerSecond, vyMetersPerSecond);
+        Rotation2d rotation = drivetrain.getPose().getRotation();
+
+        IdealStartingState idealStartingState = new IdealStartingState(velocity, rotation);
+
+        PathPlannerPath path = new PathPlannerPath(
+                                    waypoints,
+                                    constraints,
+                                    idealStartingState,
+                                    new GoalEndState(0.0, endPose.getRotation()));
+        
+        path.preventFlipping = true;
+        
+        return null;
     }
 
 

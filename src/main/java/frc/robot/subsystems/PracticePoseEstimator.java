@@ -11,6 +11,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
@@ -45,6 +46,8 @@ public class PracticePoseEstimator extends SubsystemLance
     private final Drivetrain drivetrain;
 
     private final SwerveDrivePoseEstimator poseEstimator;
+
+    private Pose2d estimatedPose = new Pose2d();
 
     private Matrix<N3, N1> visionStdDevs;
     private Matrix<N3, N1> stateStdDevs;
@@ -98,6 +101,18 @@ public class PracticePoseEstimator extends SubsystemLance
         stateStdDevs.set(2, 0, 0.05); 
     }
 
+    public boolean isReefTag(double tagID)
+    {
+        if((tagID >= 6 && tagID <= 11) || (tagID >= 17 && tagID <= 22))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     // *** CLASS METHODS & INSTANCE METHODS ***
     // Put all class methods and instance methods here
@@ -131,7 +146,56 @@ public class PracticePoseEstimator extends SubsystemLance
             {
                 Pose2d visionPose = camera.getPose();
                 int tagID = (int) camera.getTagId();
+                boolean rejectUpdate = false;
+                boolean isReefTag = isReefTag(tagID);
+                double DistToTag = camera.avgTagDistance();
+                double robotVelo = Math.hypot(drivetrain.getState().Speeds.vxMetersPerSecond, drivetrain.getState().Speeds.vyMetersPerSecond);
+                double robotRotation = Math.toDegrees(drivetrain.getState().Speeds.omegaRadiansPerSecond);
+
+                if(visionPose == null)
+                {
+                    rejectUpdate = true;
+                }
+
+                if(!isReefTag)
+                {
+                    rejectUpdate = true;
+                }
+
+                if(DistToTag > 2.0)
+                {
+                    rejectUpdate = true;
+                }
+
+                // if(!DriverStation.isTeleopEnabled())
+                // {
+                //     rejectUpdate = true;
+                // }
+
+                if(robotVelo > 2.5)
+                {
+                    rejectUpdate = true;
+                }
+
+                if(robotRotation > 180.0)
+                {
+                    rejectUpdate = true;
+                }
+
+                if(!rejectUpdate)
+                {
+                    drivetrain.addVisionMeasurement(visionPose, camera.getTimestamp(), visionStdDevs);
+                }
+
+                
+
+
             }
+        }
+
+        if(drivetrain != null && gyro != null && poseEstimator != null)
+        {
+            estimatedPose = drivetrain.getState().Pose;
         }
     }
 
