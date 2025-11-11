@@ -703,7 +703,7 @@ public final class GeneralCommands
         
         path.preventFlipping = true;
         
-        return null;
+        return AutoBuilder.followPath(path);
     }
 
 

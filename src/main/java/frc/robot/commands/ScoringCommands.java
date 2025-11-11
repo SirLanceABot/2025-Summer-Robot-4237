@@ -4,6 +4,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import javax.naming.ldap.ExtendedResponse;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -343,6 +345,28 @@ public final class ScoringCommands
             // {
             //     return Commands.none().andThen(Commands.print("Did not follow path"));
             // }
+        }
+        else
+        {
+            return Commands.none();
+        }
+    }
+
+    public static Command anEvenBetterSuperDuperAutoAlignL4Command(Supplier<Pose2d> currentPose, Supplier<Pose2d> targetPose)
+    {
+        if(drivetrain != null && elevator != null && claw != null)
+        {
+            return
+
+            Commands.parallel(
+                
+                GeneralCommands.driveOnTheFlyCommand(currentPose.get(), targetPose.get()),
+                Commands.waitUntil(() -> (camera.avgTagDistance() < 1.0 && camera.avgTagDistance() != 0.0)).andThen(GeneralCommands.moveScorerToL4Command()))
+            
+            .andThen(
+                GeneralCommands.scoreCoralProxCommand())
+            .andThen(
+                GeneralCommands.moveScorerToIntakingPositionCommand());
         }
         else
         {

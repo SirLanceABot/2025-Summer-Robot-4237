@@ -176,6 +176,12 @@ public final class OperatorBindings {
         yButton.and(aButton.negate()).whileTrue(ScoringCommands.scoreCoralAutonomouslyReallyCoolAndAwesomeCommand((() -> drivetrain.getState().Pose), (() -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch()))));
     }
 
+    private static void configYButtonButBetter()
+    {
+        Trigger yButton = controller.y();
+
+        yButton.whileTrue(ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command(() -> drivetrain.getState().Pose, () -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch())));
+    }
 
     private static void configLeftBumper()
     {
