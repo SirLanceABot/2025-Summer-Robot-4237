@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+import frc.robot.sensors.CANRange;
 import frc.robot.sensors.Camera;
 // import frc.robot.sensors.MagnetLimitSwitch;
 import frc.robot.sensors.Proximity;
@@ -57,6 +58,7 @@ public class RobotContainer
     private boolean usePracticePoseEstimator = false;
     private boolean useLaserCAN             = false;
     private boolean useProximity            = false;
+    private boolean useCANRange             = true;    
 
     private boolean useScoringSideCamera    = false; // 10.42.37.12 // BLUE CASE
     private boolean useClimbSideCamera      = false; // 10.42.37.11 // CLEAR CASE
@@ -90,6 +92,7 @@ public class RobotContainer
     private final Proximity shooterProximity;
     private final LaserCan laserCan;
     private final Proximity backupShooterProximity;
+    private final CANRange canRange;
 
 
     // private final DriverButtonBindings driverButtonBindings;
@@ -179,6 +182,10 @@ public class RobotContainer
 
         cameraArray[1] = (useFullRobot || useClimbSideCamera)
                 ? new Camera("limelight-climb")
+                : null;
+
+        canRange = (useFullRobot || useCANRange)
+                ? new CANRange(Constants.CANRange.CAN_ONE_ID, Constants.CANRange.IS_DETECTED_THRESHOLD)
                 : null;
 
         poseEstimator = (useFullRobot || usePoseEstimator)
@@ -322,6 +329,11 @@ public class RobotContainer
     public Camera getClimbSideCamera()
     {
         return cameraArray[1];
+    }
+
+    public CANRange getCANRange()
+    {
+        return canRange;
     }
 
     public Command getAutonomousCommand() 

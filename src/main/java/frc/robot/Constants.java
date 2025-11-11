@@ -148,6 +148,12 @@ public final class Constants
         public static final int BACKUP_SHOOTER_PORT                     = 4;
     }
 
+    public static class CANRange
+    {
+        public static final int CAN_ONE_ID                                    = 38;    
+        public static final double IS_DETECTED_THRESHOLD                      = 0.1; // Meters
+    }
+
     public static class Shuttle
     {
         public static final int MOTOR_PORT                              = 0;

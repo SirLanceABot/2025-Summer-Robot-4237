@@ -4,6 +4,8 @@ import java.lang.invoke.MethodHandles;
 
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.RobotContainer;
+import frc.robot.motors.TalonFXLance;
+import frc.robot.sensors.CANRange;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.IntakeWrist.Position;
@@ -33,8 +35,10 @@ public class MatthewFTest implements Test
 
     // private final ExampleSubsystem exampleSubsystem;
     private final Joystick joystick = new Joystick(0);
-    private final Intake intake;
-    private final IntakeWrist intakeWrist;
+    private final TalonFXLance motor1 = new TalonFXLance(1, "rio", "Test Motor 1");
+    private final CANRange canRange;
+    // private final Intake intake;
+    // private final IntakeWrist intakeWrist;
     
 
 
@@ -50,9 +54,11 @@ public class MatthewFTest implements Test
         System.out.println("  Constructor Started:  " + fullClassName);
 
         this.robotContainer = robotContainer;
-        this.intake = robotContainer.getIntake();
-        this.intakeWrist = robotContainer.getIntakeWrist();
-        // this.exampleSubsystem = robotContainer.exampleSubsystem;
+        canRange = robotContainer.getCANRange();
+        // this.intake = robotContainer.getIntake();
+        // this.intakeWrist = robotContainer.getIntakeWrist();
+        
+        // this.exampleSubsystem = robotC ontainer.exampleSubsystem;
 
         System.out.println("  Constructor Finished: " + fullClassName);
     }
@@ -78,39 +84,48 @@ public class MatthewFTest implements Test
     public void periodic()
     {
         
-        if (joystick.getRawButton(1))
+        if (joystick.getRawButton(1) && (canRange.getDistanceSupplier().getAsDouble() > 0.1 && canRange.getDistanceSupplier().getAsDouble() < 0.3))
         {
-            intakeWrist.moveToSetPositionCommand(Position.kIntakeCoralPosition).schedule();
-            // intake.pickupCoralCommand().schedule();
+            motor1.set(0.1);
         }
+        else if (joystick.getRawButton(1) && (canRange.getDistanceSupplier().getAsDouble() >= 0.2 && canRange.getDistanceSupplier().getAsDouble() < 0.5))
+        {
+            motor1.set(0.5);
+        }
+        else
+        {
+            motor1.stopMotor();
+        }
+        /* 
         else if (joystick.getRawButton(2))
         {
-            intakeWrist.moveToSetPositionCommand(Position.kManipAlgaePosition).schedule();
+            // intakeWrist.moveToSetPositionCommand(Position.kManipAlgaePosition).schedule();
             // intake.ejectCoralCommand().schedule();
         }
         else if(joystick.getRawButton(4))
         {
-            intakeWrist.moveToSetPositionCommand(Position.kRestingPosition).schedule();
+            // intakeWrist.moveToSetPositionCommand(Position.kRestingPosition).schedule();
         }
         else
         {
-            intakeWrist.stopCommand().schedule();
+            // intakeWrist.stopCommand().schedule();
         } 
 
         if(joystick.getRawButton(5))
         {
-            intake.pickupCoralCommand().schedule();
+            // intake.pickupCoralCommand().schedule();
         }
         else if(joystick.getRawButton(6))
         {
-            intake.ejectCoralCommand().schedule();
+            // intake.ejectCoralCommand().schedule();
         }
         else
         {
-            intake.stopCommand().schedule();
+            // intake.stopCommand().schedule();
         }
 
-        System.out.println(intakeWrist.toString());
+        // System.out.println(intakeWrist.toString());
+        */
     }
     
     /**
@@ -118,8 +133,9 @@ public class MatthewFTest implements Test
      */
     public void exit()
     {
-        intakeWrist.stopCommand().schedule();
-        intake.stopCommand().schedule();
+        motor1.stopMotor();
+        // intakeWrist.stopCommand().schedule();
+        // intake.stopCommand().schedule();
     } 
 }
 
