@@ -360,7 +360,7 @@ public final class ScoringCommands
 
             Commands.parallel(
                 
-                GeneralCommands.driveOnTheFlyCommand(currentPose.get(), targetPose.get()),
+                new DeferredCommand( () -> GeneralCommands.driveOnTheFlyCommand(currentPose.get(), targetPose.get()), Set.of(drivetrain)),
                 Commands.waitUntil(() -> (camera.avgTagDistance() < 1.0 && camera.avgTagDistance() != 0.0)).andThen(GeneralCommands.moveScorerToL4Command()))
             
             .andThen(

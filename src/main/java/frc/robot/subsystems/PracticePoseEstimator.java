@@ -17,6 +17,7 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.motors.TalonFXLance;
 import frc.robot.sensors.Camera;
+import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * This is an example of what a subsystem should look like.
@@ -48,6 +49,7 @@ public class PracticePoseEstimator extends SubsystemLance
     private final SwerveDrivePoseEstimator poseEstimator;
 
     private Pose2d estimatedPose = new Pose2d();
+    // private Pose2d wayPointThing = new Pose2d(new Translation2d(3.48, 2.405));
 
     private Matrix<N3, N1> visionStdDevs;
     private Matrix<N3, N1> stateStdDevs;
@@ -112,6 +114,11 @@ public class PracticePoseEstimator extends SubsystemLance
             return false;
         }
     }
+
+    // public Pose2d getWayPointThing()
+    // {
+    //     return wayPointThing;
+    // }
 
 
     // *** CLASS METHODS & INSTANCE METHODS ***
@@ -196,6 +203,7 @@ public class PracticePoseEstimator extends SubsystemLance
         if(drivetrain != null && gyro != null && poseEstimator != null)
         {
             estimatedPose = drivetrain.getState().Pose;
+            
         }
     }
 

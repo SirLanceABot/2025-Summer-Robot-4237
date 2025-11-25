@@ -20,6 +20,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.IntakeWrist.Position;
 import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.PracticePoseEstimator;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public final class DriverBindings {
 
@@ -56,6 +58,7 @@ public final class DriverBindings {
     private static Claw claw;
     private static Elevator elevator;
     private static PoseEstimator poseEstimator;
+    private static PracticePoseEstimator practicePoseEstimator;
 
 
     // *** CLASS CONSTRUCTOR ***
@@ -128,6 +131,7 @@ public final class DriverBindings {
     private static void configBButton()
     {
         Trigger bButton = controller.b();
+        // bButton.whileTrue(ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command((() -> drivetrain.getState().Pose), (() -> practicePoseEstimator.getWayPointThing())));
         // bButton.whileTrue()
         // bButton.whileTrue(drivetrain.pointCommand(leftYAxis, leftXAxis));
         bButton
