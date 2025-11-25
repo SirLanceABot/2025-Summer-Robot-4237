@@ -17,7 +17,7 @@ import frc.robot.commands.CommandsManager;
 import frc.robot.controls.DriverBindings;
 import frc.robot.controls.OperatorBindings;
 //import frc.robot.elastic.AutonomousTab;
-import frc.robot.elastic.ElasticLance;
+// import frc.robot.elastic.ElasticLance;
 import frc.robot.loggers.DataLogFile;
 import frc.robot.motors.MotorControllerLance;
 import frc.robot.pathplanner.PathPlannerLance;
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot
         OperatorBindings.createBindings(robotContainer);
 
         PathPlannerLance.configPathPlanner(robotContainer);
-        ElasticLance.configElastic(robotContainer);
+        // ElasticLance.configElastic(robotContainer);
         FollowPathCommand.warmupCommand().schedule();
         PathfindingCommand.warmupCommand().schedule();
     }
@@ -77,7 +77,7 @@ public class Robot extends TimedRobot
     {
         // Run periodic tasks
         PeriodicTask.runAllPeriodicTasks();
-        ElasticLance.sendDataToSmartDashboard();
+        // ElasticLance.sendDataToSmartDashboard();
 
         // // SmartDashboard.putNumber("Speed", drivetrain.getState().Speeds.getVelocity());
         // if(robotContainer.getDrivetrain() != null)
