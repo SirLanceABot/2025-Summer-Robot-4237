@@ -4,12 +4,14 @@ import java.lang.invoke.MethodHandles;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import edu.wpi.first.wpilibj.util.Color;
-// import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.motors.TalonFXLance;
@@ -37,82 +39,56 @@ public class SuperCoolMechanism extends SubsystemLance
     
     // *** CLASS VARIABLES & INSTANCE VARIABLES ***
     // Put all class variables and instance variables here
+    
+    private double armAngle = 0.0;
+    private double armKp = 4237.0;
 
-    // private final Elevator elevator;
-    private final TalonFXLance motor1 = new TalonFXLance(4, Constants.ROBORIO, "Motor 1");
-    private final TalonFXLance motor2 = new TalonFXLance(12, Constants.ROBORIO, "Motor 2");
+    // gearbox?
+
+    private final PIDController veryGoodController = new PIDController(armKp, 0, 0);
+    private final Encoder encoder = 
+        new Encoder(4237, 4237);
+    private final TalonFXLance motor1 = new TalonFXLance(0, Constants.ROBORIO, "motor1");
+
+    private final Mechanism2d mech = new Mechanism2d(60, 60);
+    private final MechanismRoot2d armPivot = mech.getRoot("ArmPivot", 30, 30);
+    private final MechanismLigament2d armTower =
+        armPivot.append(new MechanismLigament2d("ArmTower", 30, -45));
+    private final MechanismLigament2d arm =
+        armPivot.append(
+            new MechanismLigament2d(
+                "Arm",
+                30,
+                armAngle,
+                6,
+                new Color8Bit(Color.kYellow)));
 
     
-    
-    private final MechanismLigament2d armStageOne;
-    private final MechanismLigament2d armStageTwo;
 
     // *** CLASS CONSTRUCTORS ***
     // Put all class constructors here
 
     /** 
-     * Creates a new SuperCoolMechanism. 
+     * Creates a new Kabe lame Mechanism. 
      */
     public SuperCoolMechanism()
     {
-        super("Super Cool Mechanism");
-        System.out.println("  Constructor Started:  " + fullClassName);
+        super("Kabe Lame Mechanism");
+        System.out.println("Constructor Started:  " + fullClassName);
 
-        configMotors();
+        // configMotors();
 
-        Mechanism2d arm = new Mechanism2d(3,3);
-        MechanismRoot2d root = arm.getRoot("arm", 2, 0);
-    
-        armStageOne = root.append(new MechanismLigament2d("arm stage one", 1, 90));
-        armStageTwo = armStageOne.append(new MechanismLigament2d("arm stage two", 1, 90));
+        SmartDashboard.putData("Arm Sim", mech);
+        armTower.setColor(new Color8Bit(Color.kBlue));
 
-        SmartDashboard.putData("Mech2d", arm);
+        // LoggerMechanism2d mechanism = new LoggedMechanism2d(3,3);
+        // Logger.recordOutput("MyMechanism", mechanism);
 
         System.out.println("  Constructor Finished: " + fullClassName);
     }
 
-
     // *** CLASS METHODS & INSTANCE METHODS ***
     // Put all class methods and instance methods here
-
-    private void configMotors()
-    {
-        motor1.setupFactoryDefaults();
-        motor2.setupFactoryDefaults();
-    }
-
-    /**
-     * This sets the speed of the motors.
-     * @param speed The motor speed (-1.0 to 1.0)
-     */
-    private void set(double speed)
-    {
-        motor1.set(speed);
-        motor2.set(speed);
-    }
-
-    public void stop()
-    {
-        motor1.set(0.0);
-        motor2.set(0.0);
-    }
-
-    public Command onCommand()
-    {
-        return run( () -> set(0.25) );
-    }
-
-    public Command setCommand(DoubleSupplier speed)
-    {
-        return run( () -> set(MathUtil.clamp(speed.getAsDouble(), 0.0, 0.5)) );
-    }
-
-    // Use a method reference instead of this method
-    // public Command stopCommand()
-    // {
-    //     return run( () -> stop() );
-    // }
-
 
     // *** OVERRIDEN METHODS ***
     // Put all methods that are Overridden here
@@ -123,13 +99,15 @@ public class SuperCoolMechanism extends SubsystemLance
         // This method will be called once per scheduler run
         // Use this for sensors that need to be read periodically.
         // Use this for data that needs to be logged.
-
-         
+        
+        
+        SmartDashboard.putNumber("Value", 1);
+        System.out.println("please work--------------------------------------------------------------------------------------------");
     }
 
     @Override
     public String toString()
     {
-        return "Mechanism";
+        return "Kabe Lame Mechanism";
     }
 }

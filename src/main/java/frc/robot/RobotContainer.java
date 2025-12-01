@@ -18,6 +18,7 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Sonic;
+import frc.robot.subsystems.SuperCoolMechanism;
 
 public class RobotContainer 
 {
@@ -42,6 +43,7 @@ public class RobotContainer
     private boolean usePivot                = false;
     private boolean useShuttle              = false;
     private boolean useSonic                = false;
+    private boolean useSuperCoolMechanism   = true;
     // private boolean useLEDs                 = false;
 
     private boolean useGyro                 = false;
@@ -69,6 +71,7 @@ public class RobotContainer
     private final Pivot pivot;
     private final LEDs leds;
     private final Sonic sonic;
+    private final SuperCoolMechanism superCoolMechanism;
 
     private final Camera[] cameraArray = new Camera[2];
     private final PoseEstimator poseEstimator;
@@ -124,6 +127,10 @@ public class RobotContainer
         sonic = (useSonic)
                 ? new Sonic()
                 : null;
+
+        superCoolMechanism = (useSuperCoolMechanism)
+                                ? new SuperCoolMechanism()
+                                : null;
 
         // leds = (useFullRobot || useLEDs)
         //         ? new LEDs()
@@ -203,6 +210,11 @@ public class RobotContainer
     public Sonic getSonic()
     {
         return sonic;
+    }
+
+    public SuperCoolMechanism getSuperCoolMechanism()
+    {
+        return superCoolMechanism;
     }
 
     public Intake getIntake()

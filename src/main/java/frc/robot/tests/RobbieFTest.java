@@ -13,6 +13,7 @@ import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.LEDs.ColorPattern;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Sonic;
+import frc.robot.subsystems.SuperCoolMechanism;
 import frc.robot.RobotContainer;
 import frc.robot.commands.GeneralCommands;
 import frc.robot.Constants;
@@ -46,6 +47,7 @@ public class RobbieFTest implements Test
     private final IntakeWrist intakeWrist;
     private final Elevator elevator;
     private final Sonic sonic;
+    private final SuperCoolMechanism superCoolMechanism;
 
     private final Joystick joystick = new Joystick(0);
     // private final ExampleSubsystem exampleSubsystem;
@@ -68,6 +70,7 @@ public class RobbieFTest implements Test
         elevator = robotContainer.getElevator();
         intake = robotContainer.getIntake();
         sonic = robotContainer.getSonic();
+        superCoolMechanism = robotContainer.getSuperCoolMechanism();
         // this.exampleSubsystem = robotContainer.exampleSubsystem;
 
         System.out.println("  Constructor Finished: " + fullClassName);
@@ -101,6 +104,8 @@ public class RobbieFTest implements Test
         {
             sonic.off();
         }
+
+        System.out.println("here+++++++++++++++++++++++++++++++++++");
     }
     
     /**
