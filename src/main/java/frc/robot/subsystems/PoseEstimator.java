@@ -78,6 +78,7 @@ public class PoseEstimator extends SubsystemLance
 
     // Outputs
     private Pose2d estimatedPose = new Pose2d();
+    private Pose2d wayPointThing = new Pose2d(14.100, 5.665, Rotation2d.fromDegrees(-30.0));
     private StructPublisher<Pose2d> poseEstimatorEntry;
 
     private boolean isRightBranch = false;
@@ -148,6 +149,8 @@ public class PoseEstimator extends SubsystemLance
     private branchSide branchSide;
     // *** CLASS CONSTRUCTORS ***
     // Put all class constructors here
+
+    
 
     /** 
      * Creates a new PoseEstimator. 
@@ -532,7 +535,10 @@ public class PoseEstimator extends SubsystemLance
             }
         }
     }
-
+    public Pose2d getWayPointThing()
+    {
+        return wayPointThing;
+    }
     public boolean getIsRightBranch()
     {
         return isRightBranch;
@@ -623,7 +629,7 @@ public class PoseEstimator extends SubsystemLance
         return runOnce(() -> setPlacingFaceToS6());
     }
         
-    
+  
 
     // public Pose2d closestAprilTag()
     // {

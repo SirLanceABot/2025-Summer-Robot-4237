@@ -17,6 +17,7 @@ import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.PracticePoseEstimator;
 import frc.robot.subsystems.Sonic;
 import frc.robot.subsystems.SuperCoolMechanism;
 
@@ -32,7 +33,7 @@ public class RobotContainer
         System.out.println("Loading: " + fullClassName);
     }
 
-    private boolean useFullRobot            = false;
+    private boolean useFullRobot            = true;
 
     private boolean useClaw                 = false;
     private boolean useClimb                = false;
@@ -43,11 +44,12 @@ public class RobotContainer
     private boolean usePivot                = false;
     private boolean useShuttle              = false;
     private boolean useSonic                = false;
-    private boolean useSuperCoolMechanism   = true;
+    private boolean useSuperCoolMechanism   = false;
     // private boolean useLEDs                 = false;
 
     private boolean useGyro                 = false;
     private boolean usePoseEstimator        = false;
+    private boolean usePracticePoseEstimator = false;
     private boolean useProximity            = false;
 
     private boolean useScoringSideCamera    = false; // 10.42.37.12 // BLUE CASE
@@ -75,6 +77,7 @@ public class RobotContainer
 
     private final Camera[] cameraArray = new Camera[2];
     private final PoseEstimator poseEstimator;
+    // private final PracticePoseEstimator practicePoseEstimator;
     private final Proximity intakeProximity;
     private final Proximity shooterProximity;
     private final Proximity backupShooterProximity;
@@ -162,6 +165,10 @@ public class RobotContainer
                 ? new PoseEstimator(drivetrain, cameraArray)
                 : null;
 
+        // practicePoseEstimator = (useFullRobot || usePracticePoseEstimator)
+        //         ? new PracticePoseEstimator(drivetrain, cameraArray)
+        //         : null;
+
         driverController = (useFullRobot || useDriverController)
                 ? new CommandXboxController(Constants.Controllers.DRIVER_CONTROLLER_PORT)
                 : null;
@@ -236,6 +243,11 @@ public class RobotContainer
     {
         return poseEstimator;
     }
+
+    // public PracticePoseEstimator getPracticePoseEstimator()
+    // {
+    //     return practicePoseEstimator;
+    // }
 
     public Proximity getIntakeProximity()
     {

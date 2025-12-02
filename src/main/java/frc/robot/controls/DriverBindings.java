@@ -71,6 +71,7 @@ public final class DriverBindings {
         intake = robotContainer.getIntake();
         elevator = robotContainer.getElevator();
         poseEstimator = robotContainer.getPoseEstimator();
+        // practicePoseEstimator = robotContainer.getPracticePoseEstimator();
         
 
         if(controller != null)
@@ -131,11 +132,13 @@ public final class DriverBindings {
     private static void configBButton()
     {
         Trigger bButton = controller.b();
-        // bButton.whileTrue(ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command((() -> drivetrain.getState().Pose), (() -> practicePoseEstimator.getWayPointThing())));
+        bButton.onTrue(ScoringCommands.moveToSpotCommand((() -> drivetrain.getState().Pose), (() -> poseEstimator.getWayPointThing()))
+        .andThen(ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command(() -> drivetrain.getState().Pose, () -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch()))));
+        // bButton.whileTrue(ScoringCommands.autoAlignL3Command((() -> drivetrain.getState().Pose), (() -> PoseEstimator.getWayPointThing())));
         // bButton.whileTrue()
         // bButton.whileTrue(drivetrain.pointCommand(leftYAxis, leftXAxis));
-        bButton
-            .onTrue(GeneralCommands.deleteUpperAlgaeCommand());
+        // bButton
+        //     .onTrue(GeneralCommands.deleteUpperAlgaeCommand());
         // bButton.onTrue(claw.moveSticktoSetPositionCommand(0.0));
         // bButton.onTrue(new DeferredCommand(() -> GeneralCommands.driveToPositionCommand(new Pose2d(1.5, 1.5, new Rotation2d(Math.toRadians(-30))), currentPose.get()), Set.of(drivetrain)));
         //applyRequest(() -> 
