@@ -7,8 +7,10 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -49,7 +51,7 @@ public class PracticePoseEstimator extends SubsystemLance
     private final SwerveDrivePoseEstimator poseEstimator;
 
     private Pose2d estimatedPose = new Pose2d();
-    // private Pose2d wayPointThing = new Pose2d(new Translation2d(3.48, 2.405));
+    
 
     private Matrix<N3, N1> visionStdDevs;
     private Matrix<N3, N1> stateStdDevs;
@@ -68,6 +70,11 @@ public class PracticePoseEstimator extends SubsystemLance
         this.cameraArray = cameraArray;
         this.drivetrain = drivetrain;
         this.gyro = drivetrain.getPigeon2();
+
+        double[] doubleArray = {0.0, 0.0, 0.0};
+
+        visionStdDevs = new Matrix<N3, N1>(Nat.N3(), Nat.N1(), doubleArray);
+        stateStdDevs = new Matrix<N3, N1>(Nat.N3(), Nat.N1(), doubleArray);
 
         configStdDevs();
 
@@ -115,10 +122,7 @@ public class PracticePoseEstimator extends SubsystemLance
         }
     }
 
-    // public Pose2d getWayPointThing()
-    // {
-    //     return wayPointThing;
-    // }
+    
 
 
     // *** CLASS METHODS & INSTANCE METHODS ***
