@@ -47,7 +47,8 @@ public class RobbieFTest implements Test
     private final IntakeWrist intakeWrist;
     private final Elevator elevator;
     private final Sonic sonic;
-    private final SuperCoolMechanism superCoolMechanism;
+    
+    private final SuperCoolMechanism arm = new SuperCoolMechanism();
 
     private final Joystick joystick = new Joystick(0);
     // private final ExampleSubsystem exampleSubsystem;
@@ -70,7 +71,7 @@ public class RobbieFTest implements Test
         elevator = robotContainer.getElevator();
         intake = robotContainer.getIntake();
         sonic = robotContainer.getSonic();
-        superCoolMechanism = robotContainer.getSuperCoolMechanism();
+        // superCoolMechanism = robotContainer.getSuperCoolMechanism();
         // this.exampleSubsystem = robotContainer.exampleSubsystem;
 
         System.out.println("  Constructor Finished: " + fullClassName);
@@ -98,14 +99,13 @@ public class RobbieFTest implements Test
     {
         if (joystick.getRawButton(1))
         {
-            sonic.setFirst(.1);
+            arm.reachSetpoint();
         }
         else if (joystick.getRawButton(2))
         {
-            sonic.off();
+            arm.stop();
         }
-
-        System.out.println("here+++++++++++++++++++++++++++++++++++");
+        
     }
     
     /**

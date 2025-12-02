@@ -164,6 +164,21 @@ public final class Constants
         public static final double RED_RIGHT_YAW = 180.0;
     }
 
+    public static class SuperCoolMechanism
+    {
+        public static final int kEncoderAChannel = 0;
+        public static final int kEncoderBChannel = 1;
+        public static final double kArmReduction = 1;
+        public static final double kArmLength = 1;
+        public static final double kMinAngleRads = 0.0;
+        public static final double kMaxAngleRads = 6.0;
+        public static final double kArmMass = 4.0;
+        public static final double kArmEncoderDistPerPulse = 10.0;
+        public static final double kDefaultArmKp = 1.0;
+        public static final double kDefaultArmSetpointDegrees = 90.0;
+
+    }
+
     // public enum TargetPosition
     // {
     //     kStartingPosition(Constants.Elevator.RESTING_POSITION, Constants.Pivot.RESTING_POSITION),
