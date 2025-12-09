@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.sensors.Camera;
 import frc.robot.sensors.Proximity;
+import frc.robot.sensors.RangerDistanceSensor;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
@@ -33,7 +34,7 @@ public class RobotContainer
         System.out.println("Loading: " + fullClassName);
     }
 
-    private boolean useFullRobot            = true;
+    private boolean useFullRobot            = false;
 
     private boolean useClaw                 = false;
     private boolean useClimb                = false;
@@ -45,6 +46,7 @@ public class RobotContainer
     private boolean useShuttle              = false;
     private boolean useSonic                = false;
     private boolean useSuperCoolMechanism   = false;
+    private boolean useRangerDistanceSensor = false;
     // private boolean useLEDs                 = false;
 
     private boolean useGyro                 = false;
@@ -74,6 +76,7 @@ public class RobotContainer
     private final LEDs leds;
     private final Sonic sonic;
     private final SuperCoolMechanism superCoolMechanism;
+    private final RangerDistanceSensor rangerDistanceSensor;
 
     private final Camera[] cameraArray = new Camera[2];
     private final PoseEstimator poseEstimator;
@@ -133,6 +136,10 @@ public class RobotContainer
 
         superCoolMechanism = (useSuperCoolMechanism)
                                 ? new SuperCoolMechanism()
+                                : null;
+        
+        rangerDistanceSensor = (useRangerDistanceSensor)
+                                ? new RangerDistanceSensor()
                                 : null;
 
         // leds = (useFullRobot || useLEDs)
@@ -222,6 +229,11 @@ public class RobotContainer
     public SuperCoolMechanism getSuperCoolMechanism()
     {
         return superCoolMechanism;
+    }
+
+    public RangerDistanceSensor getRangerDistanceSensor()
+    {
+        return rangerDistanceSensor;
     }
 
     public Intake getIntake()
