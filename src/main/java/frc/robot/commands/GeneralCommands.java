@@ -681,6 +681,34 @@ public final class GeneralCommands
         return AutoBuilder.followPath(path);
     }
 
+    public static Command driveToThreeWaypoints(Pose2d targetPose, Pose2d middlePose, Pose2d currentPose)
+    {
+        PathConstraints constraints = new PathConstraints(2.0, 1.0, Units.degreesToRadians(360), Units.degreesToRadians(360));
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                                    new Pose2d(currentPose.getTranslation(), currentPose.getRotation()),
+                                    new Pose2d(middlePose.getTranslation(), middlePose.getRotation()),
+                                    new Pose2d(targetPose.getTranslation(), targetPose.getRotation()));          
+
+        double vxMetersPerSecond = drivetrain.getState().Speeds.vxMetersPerSecond;
+        double vyMetersPerSecond = drivetrain.getState().Speeds.vyMetersPerSecond;
+
+        double velocity = Math.sqrt(vxMetersPerSecond * vxMetersPerSecond + vyMetersPerSecond * vyMetersPerSecond);
+
+        Rotation2d rotation = drivetrain.getPose().getRotation();
+
+        IdealStartingState idealStartingState = new IdealStartingState(velocity, rotation);
+
+        PathPlannerPath path = new PathPlannerPath(
+                                    waypoints,
+                                    constraints,
+                                    idealStartingState, // set this to null if not working
+                                    new GoalEndState(0.0, targetPose.getRotation()));
+        path.preventFlipping = true;
+
+
+        return AutoBuilder.followPath(path);
+    }
+
     public static Command driveOnTheFlyCommand(Pose2d currentPose, Pose2d endPose)
     {
         PathConstraints constraints = new PathConstraints(0.5, 0.25, Units.degreesToRadians(72), Units.degreesToRadians(72));
