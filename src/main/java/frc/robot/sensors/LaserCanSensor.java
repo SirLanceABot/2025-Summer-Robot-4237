@@ -10,7 +10,7 @@ public class LaserCanSensor extends SensorLance
 {
     private static final String fullClassName = MethodHandles.lookup().lookupClass().getCanonicalName();
     private LaserCan laserCAN = new LaserCan(0);
-
+    
     // configures default settings for sensor from grapple
     public void configureLaserCAN()
     {
@@ -39,15 +39,17 @@ public class LaserCanSensor extends SensorLance
     @Override
     public void periodic()
     {
-        LaserCan.Measurement measurement = laserCAN.getMeasurement();
-        if(measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)
-        {
-            System.out.println("The target is " + measurement.distance_mm + " mm away");
-        }        
-        else
-        {
-            System.out.println("Target out of range");
-        }
+        // LaserCan.Measurement measurement = laserCAN.getMeasurement();
+        // if(measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)
+        // {
+        //     System.out.println("The target is " + measurement.distance_mm + " mm away");
+        // }        
+        // else
+        // {
+        //     System.out.println("Target out of range");
+        // }
+
+        // these statements are also in RobbieF test
 
     }
 

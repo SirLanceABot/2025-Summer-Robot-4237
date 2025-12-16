@@ -2,6 +2,7 @@ package frc.robot;
 
 import java.lang.invoke.MethodHandles;
 
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -52,6 +53,7 @@ public class RobotContainer
     private boolean useGyro                 = false;
     private boolean usePoseEstimator        = false;
     private boolean usePracticePoseEstimator = false;
+    private boolean useLaserCAN             = false;
     private boolean useProximity            = false;
 
     private boolean useScoringSideCamera    = false; // 10.42.37.12 // BLUE CASE
@@ -83,6 +85,7 @@ public class RobotContainer
     // private final PracticePoseEstimator practicePoseEstimator;
     private final Proximity intakeProximity;
     private final Proximity shooterProximity;
+    private final LaserCan laserCan;
     private final Proximity backupShooterProximity;
 
 
@@ -147,6 +150,10 @@ public class RobotContainer
         //         : null;
 
         leds = new LEDs();
+
+        laserCan = (useFullRobot || useLaserCAN)
+                ? new LaserCan(0)
+                : null;
 
         intakeProximity = (useFullRobot || useProximity)
                 ? new Proximity(Constants.Proximity.CORAL_INTAKE_PORT)
@@ -249,6 +256,11 @@ public class RobotContainer
     public Pivot getPivot()
     {
         return pivot;
+    }
+
+    public LaserCan getLaserCan()
+    {
+        return laserCan;
     }
 
     public PoseEstimator getPoseEstimator()

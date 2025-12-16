@@ -3,6 +3,7 @@ package frc.robot.tests;
 import java.lang.annotation.Target;
 import java.lang.invoke.MethodHandles;
 
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -47,10 +48,11 @@ public class RobbieFTest implements Test
     private final IntakeWrist intakeWrist;
     private final Elevator elevator;
     private final Sonic sonic;
-    
-    private final SuperCoolMechanism arm = new SuperCoolMechanism();
+    private final LaserCan laserCan;
 
-    private final Joystick joystick = new Joystick(0);
+    // private final SuperCoolMechanism arm = new SuperCoolMechanism();
+
+    // private final Joystick joystick = new Joystick(0);
     // private final ExampleSubsystem exampleSubsystem;
 
 
@@ -71,6 +73,7 @@ public class RobbieFTest implements Test
         elevator = robotContainer.getElevator();
         intake = robotContainer.getIntake();
         sonic = robotContainer.getSonic();
+        laserCan = robotContainer.getLaserCan();
         // superCoolMechanism = robotContainer.getSuperCoolMechanism();
         // this.exampleSubsystem = robotContainer.exampleSubsystem;
 
@@ -97,15 +100,24 @@ public class RobbieFTest implements Test
     //  */
     public void periodic()
     {
-        if (joystick.getRawButton(1))
-        {
-            arm.reachSetpoint();
-        }
-        else if (joystick.getRawButton(2))
-        {
-            arm.stop();
-        }
+        // if (joystick.getRawButton(1))
+        // {
+        //     arm.reachSetpoint();
+        // }
+        // else if (joystick.getRawButton(2))
+        // {
+        //     arm.stop();
+        // }
         
+        LaserCan.Measurement measurement = laserCan.getMeasurement();
+        if(measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)
+        {
+            System.out.println("The target is " + measurement.distance_mm * 0.0393701 + " in away"); // converts to inches
+        }        
+        else
+        {
+            System.out.println("Target out of range");
+        }
     }
     
     /**

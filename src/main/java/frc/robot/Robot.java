@@ -7,6 +7,7 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -55,6 +56,8 @@ public class Robot extends TimedRobot
         //Configure the loggers
         DataLogFile.config();
 
+        CanBridge.runTCP();
+        
         //Configure RobotContainer
         robotContainer = new RobotContainer();
         leds = robotContainer.getLEDs();
