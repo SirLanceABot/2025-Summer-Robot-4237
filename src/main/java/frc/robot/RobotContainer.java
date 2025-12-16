@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.sensors.Camera;
+import frc.robot.sensors.MagnetLimitSwitch;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.RangerDistanceSensor;
 import frc.robot.subsystems.Claw;
@@ -47,6 +48,7 @@ public class RobotContainer
     private boolean useSonic                = false;
     private boolean useSuperCoolMechanism   = false;
     private boolean useRangerDistanceSensor = false;
+    private boolean useMagnetLimitSwitch    = false;
     // private boolean useLEDs                 = false;
 
     private boolean useGyro                 = false;
@@ -77,6 +79,7 @@ public class RobotContainer
     private final Sonic sonic;
     private final SuperCoolMechanism superCoolMechanism;
     private final RangerDistanceSensor rangerDistanceSensor;
+    private final MagnetLimitSwitch magnetLimitSwitch;
 
     private final Camera[] cameraArray = new Camera[2];
     private final PoseEstimator poseEstimator;
@@ -142,6 +145,9 @@ public class RobotContainer
                                 ? new RangerDistanceSensor()
                                 : null;
 
+        magnetLimitSwitch = (useMagnetLimitSwitch)
+                                ? new MagnetLimitSwitch()
+                                : null;
         // leds = (useFullRobot || useLEDs)
         //         ? new LEDs()
         //         : null;
@@ -234,6 +240,11 @@ public class RobotContainer
     public RangerDistanceSensor getRangerDistanceSensor()
     {
         return rangerDistanceSensor;
+    }
+
+    public MagnetLimitSwitch getMagnetLimitSwitch()
+    {
+        return magnetLimitSwitch;
     }
 
     public Intake getIntake()

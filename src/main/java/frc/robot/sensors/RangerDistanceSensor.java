@@ -25,15 +25,17 @@ public class RangerDistanceSensor extends SensorLance
     // *** INNER ENUMS and INNER CLASSES ***
     // Put all inner enums and inner classes here
     private static final double k15DegreeFOVVoltageToDistanceConversionFactor = 32.50930976; // Y-int= -2.695384202
+    // 0-1 Short range (2-40in / 50-1000mm recommended) - 15Hz
     private static final double k20DegreeFOVVoltageToDistanceConversionFactor = 48.78136376; // Y-int= -4.985354503
+    // 0-0 Moderate range (2-60in / 50-1500mm recommended) - 10Hz
     private static final double k27DegreeFOVVoltageToDistanceConversionFactor = 76.85612461; // Y-int= -9.925949725
+    // 1-0 Long range (2-120in / 50-3000mm recommended) - 2.5Hz
 
     // *** CLASS VARIABLES & INSTANCE VARIABLES ***
     // Put all class variables and instance variables here
     private final AnalogInput swyftDistanceSensor = new AnalogInput(0);
     private final DigitalInput swyftDetectorSensor = new DigitalInput(0);
     private double distance_in;
-
 
     // *** CLASS CONSTRUCTORS ***
     // Put all class constructors here
