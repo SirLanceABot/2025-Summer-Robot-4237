@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -9,6 +10,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
 import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.estimator.PoseEstimator;
@@ -681,13 +683,14 @@ public final class GeneralCommands
         return AutoBuilder.followPath(path);
     }
 
-    public static Command driveToThreeWaypoints(Pose2d targetPose, Pose2d middlePose, Pose2d currentPose)
+    public static Command driveToThreeWaypoints(Supplier<Pose2d> targetPose, Supplier<Pose2d> middlePose, Supplier<Pose2d> currentPose)
     {
-        PathConstraints constraints = new PathConstraints(2.0, 1.0, Units.degreesToRadians(360), Units.degreesToRadians(360));
+        PathConstraints constraints = new PathConstraints(0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(360));
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                                    new Pose2d(currentPose.getTranslation(), currentPose.getRotation()),
-                                    new Pose2d(middlePose.getTranslation(), middlePose.getRotation()),
-                                    new Pose2d(targetPose.getTranslation(), targetPose.getRotation()));          
+                                    new Pose2d(currentPose.get().getTranslation(), currentPose.get().getRotation()),
+                                    new Pose2d(middlePose.get().getTranslation(), middlePose.get().getRotation()),
+                                    new Pose2d(targetPose.get().getTranslation(), targetPose.get().getRotation()));
+
 
         double vxMetersPerSecond = drivetrain.getState().Speeds.vxMetersPerSecond;
         double vyMetersPerSecond = drivetrain.getState().Speeds.vyMetersPerSecond;
@@ -695,6 +698,7 @@ public final class GeneralCommands
         double velocity = Math.sqrt(vxMetersPerSecond * vxMetersPerSecond + vyMetersPerSecond * vyMetersPerSecond);
 
         Rotation2d rotation = drivetrain.getPose().getRotation();
+        Rotation2d heading = new Rotation2d();
 
         IdealStartingState idealStartingState = new IdealStartingState(velocity, rotation);
 
@@ -702,10 +706,9 @@ public final class GeneralCommands
                                     waypoints,
                                     constraints,
                                     idealStartingState, // set this to null if not working
-                                    new GoalEndState(0.0, targetPose.getRotation()));
+                                    new GoalEndState(0.0, targetPose.get().getRotation()));
         path.preventFlipping = true;
-
-
+        
         return AutoBuilder.followPath(path);
     }
 

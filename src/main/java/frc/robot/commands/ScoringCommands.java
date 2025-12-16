@@ -376,6 +376,29 @@ public final class ScoringCommands
         }
     }
 
+    public static Command anEvenBetterSuperDuperAutoAlignL4Command(Supplier <Pose2d> targetPose, Supplier<Pose2d> middlePose, Supplier<Pose2d> currentPose)
+    {
+        if(drivetrain != null && elevator != null && claw != null)
+        {
+            return 
+
+            new DeferredCommand( () -> GeneralCommands.driveToThreeWaypoints(() -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch()), () -> (poseEstimator.getWayPointThing()), () -> (drivetrain.getState().Pose)), Set.of(drivetrain))
+
+            .andThen( 
+                Commands.waitUntil(() -> (camera.avgTagDistance() < 1.0 && camera.avgTagDistance() != 0.0)).andThen(GeneralCommands.moveScorerToL4Command()))
+            
+            .andThen(
+                GeneralCommands.scoreCoralProxCommand())
+            .andThen(
+                GeneralCommands.moveScorerToIntakingPositionCommand());
+        }
+        else
+        {
+            return Commands.none();
+        }
+        
+    }
+
     public static Command moveToSpotCommand(Supplier<Pose2d> currentPose, Supplier<Pose2d> targetPose)
     {
         if(drivetrain != null && elevator != null && claw != null)

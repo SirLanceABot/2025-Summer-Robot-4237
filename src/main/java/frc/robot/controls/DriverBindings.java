@@ -1,12 +1,14 @@
 package frc.robot.controls;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotContainer;
@@ -132,8 +134,8 @@ public final class DriverBindings {
     private static void configBButton()
     {
         Trigger bButton = controller.b();
-        bButton.onTrue(ScoringCommands.moveToSpotCommand((() -> drivetrain.getState().Pose), (() -> poseEstimator.getWayPointThing()))
-        .andThen(ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command(() -> drivetrain.getState().Pose, () -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch()))));
+        // bButton.onTrue(ScoringCommands.moveToSpotCommand((() -> drivetrain.getState().Pose), (() -> poseEstimator.getWayPointThing()))
+        // .andThen(ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command(() -> drivetrain.getState().Pose, () -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch()))));
         // bButton.whileTrue(ScoringCommands.autoAlignL3Command((() -> drivetrain.getState().Pose), (() -> PoseEstimator.getWayPointThing())));
         // bButton.whileTrue()
         // bButton.whileTrue(drivetrain.pointCommand(leftYAxis, leftXAxis));
@@ -143,6 +145,7 @@ public final class DriverBindings {
         // bButton.onTrue(new DeferredCommand(() -> GeneralCommands.driveToPositionCommand(new Pose2d(1.5, 1.5, new Rotation2d(Math.toRadians(-30))), currentPose.get()), Set.of(drivetrain)));
         //applyRequest(() -> 
         // drivetrain.point.withModuleDirection(new Rotation2d(-leftYAxis.getAsDouble(), -leftXAxis.getAsDouble()))));
+        bButton.onTrue(new DeferredCommand( () -> ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command(() -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch()), () -> (poseEstimator.getWayPointThing()), () -> (drivetrain.getState().Pose)), Set.of(drivetrain)));
     }
 
 
