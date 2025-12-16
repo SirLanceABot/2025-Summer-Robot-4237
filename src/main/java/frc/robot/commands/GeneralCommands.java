@@ -712,6 +712,36 @@ public final class GeneralCommands
         return AutoBuilder.followPath(path);
     }
 
+    public static Command driveStraightThroughTwoPoints(Supplier<Pose2d> targetPose, Supplier<Pose2d> targetadj, Supplier<Pose2d> currentPose, Supplier<Pose2d> currentadj)
+    {
+        PathConstraints constraints = new PathConstraints(0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(360));
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                                    new Pose2d(currentPose.get().getTranslation(), currentPose.get().getRotation()),
+                                    new Pose2d(currentadj.get().getTranslation(), currentadj.get().getRotation()),
+                                    new Pose2d(targetadj.get().getTranslation(), targetadj.get().getRotation()),
+                                    new Pose2d(targetPose.get().getTranslation(), targetPose.get().getRotation()));
+
+
+        double vxMetersPerSecond = drivetrain.getState().Speeds.vxMetersPerSecond;
+        double vyMetersPerSecond = drivetrain.getState().Speeds.vyMetersPerSecond;
+
+        double velocity = Math.sqrt(vxMetersPerSecond * vxMetersPerSecond + vyMetersPerSecond * vyMetersPerSecond);
+
+        Rotation2d rotation = drivetrain.getPose().getRotation();
+        Rotation2d heading = new Rotation2d();
+
+        IdealStartingState idealStartingState = new IdealStartingState(velocity, rotation);
+
+        PathPlannerPath path = new PathPlannerPath(
+                                    waypoints,
+                                    constraints,
+                                    idealStartingState, // set this to null if not working
+                                    new GoalEndState(0.0, targetPose.get().getRotation()));
+        path.preventFlipping = true;
+        
+        return AutoBuilder.followPath(path);
+    }
+
     public static Command driveOnTheFlyCommand(Pose2d currentPose, Pose2d endPose)
     {
         PathConstraints constraints = new PathConstraints(0.5, 0.25, Units.degreesToRadians(72), Units.degreesToRadians(72));
