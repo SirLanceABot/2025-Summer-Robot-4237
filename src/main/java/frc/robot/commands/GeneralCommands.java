@@ -11,6 +11,7 @@ import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
+import com.pathplanner.lib.path.PointTowardsZone;
 import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.estimator.PoseEstimator;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CommandsManager.TargetPosition;
+import frc.robot.sensors.Camera;
 import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Climb;
@@ -70,6 +72,7 @@ public final class GeneralCommands
     private static Proximity shooterBackupProximity;
     private static PoseEstimator poseEstimate;
     private static Drivetrain drivetrain;
+    private static Camera camera;
    
 
 
@@ -94,6 +97,7 @@ public final class GeneralCommands
         shooterProximity = robotContainer.getShooterProximity();
         shooterBackupProximity = robotContainer.getBackupShooterProximity();
         drivetrain = robotContainer.getDrivetrain();
+        camera = robotContainer.getScoringSideCamera();
 
         System.out.println("  Constructor Finished: " + fullClassName);
     }
@@ -739,6 +743,47 @@ public final class GeneralCommands
                                     new GoalEndState(0.0, targetPose.get().getRotation()));
         path.preventFlipping = true;
         
+        return AutoBuilder.followPath(path);
+    }
+
+    public static Command pointToSpotDriveCommand(Supplier<Pose2d> currentPose, Supplier<Pose2d> targetPose)
+    {
+        PathConstraints constraints = new PathConstraints(2.0, 1.0, Units.degreesToRadians(360), Units.degreesToRadians(360));
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                                    new Pose2d(currentPose.get().getTranslation(), currentPose.get().getRotation()),
+                                    new Pose2d(targetPose.get().getTranslation(), targetPose.get().getRotation()));          
+
+        double vxMetersPerSecond = drivetrain.getState().Speeds.vxMetersPerSecond;
+        double vyMetersPerSecond = drivetrain.getState().Speeds.vyMetersPerSecond;
+
+        double velocity = Math.sqrt(vxMetersPerSecond * vxMetersPerSecond + vyMetersPerSecond * vyMetersPerSecond);
+
+        Rotation2d rotation = drivetrain.getPose().getRotation();
+
+        // NOT CORRECT VALUES
+        double startZone = 0.0;
+        double endZone = 0.0;
+
+        PointTowardsZone pointZone = new PointTowardsZone(
+            "zone", targetPose.get().getTranslation(), targetPose.get().getRotation(), startZone, endZone);
+
+        List<PointTowardsZone> pointTowardsZones = List.of(pointZone);
+
+        IdealStartingState idealStartingState = new IdealStartingState(velocity, rotation);
+
+        PathPlannerPath path = new PathPlannerPath(
+                                    waypoints,
+                                    null,
+                                    pointTowardsZones,
+                                    null,
+                                    null,
+                                    constraints,
+                                    idealStartingState, // set this to null if not working
+                                    new GoalEndState(0.0, targetPose.get().getRotation()),
+                                    false);
+        path.preventFlipping = true;
+
+
         return AutoBuilder.followPath(path);
     }
 
