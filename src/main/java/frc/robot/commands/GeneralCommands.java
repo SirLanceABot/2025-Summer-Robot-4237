@@ -716,42 +716,18 @@ public final class GeneralCommands
         return AutoBuilder.followPath(path);
     }
 
-    public static Command driveStraightThroughTwoPoints(Supplier<Pose2d> targetPose, Supplier<Pose2d> targetadj, Supplier<Pose2d> currentPose, Supplier<Pose2d> currentadj)
-    {
-        PathConstraints constraints = new PathConstraints(0.5, 0.5, Units.degreesToRadians(360), Units.degreesToRadians(360));
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                                    new Pose2d(currentPose.get().getTranslation(), currentPose.get().getRotation()),
-                                    new Pose2d(currentadj.get().getTranslation(), currentadj.get().getRotation()),
-                                    new Pose2d(targetadj.get().getTranslation(), targetadj.get().getRotation()),
-                                    new Pose2d(targetPose.get().getTranslation(), targetPose.get().getRotation()));
-
-
-        double vxMetersPerSecond = drivetrain.getState().Speeds.vxMetersPerSecond;
-        double vyMetersPerSecond = drivetrain.getState().Speeds.vyMetersPerSecond;
-
-        double velocity = Math.sqrt(vxMetersPerSecond * vxMetersPerSecond + vyMetersPerSecond * vyMetersPerSecond);
-
-        Rotation2d rotation = drivetrain.getPose().getRotation();
-        Rotation2d heading = new Rotation2d();
-
-        IdealStartingState idealStartingState = new IdealStartingState(velocity, rotation);
-
-        PathPlannerPath path = new PathPlannerPath(
-                                    waypoints,
-                                    constraints,
-                                    idealStartingState, // set this to null if not working
-                                    new GoalEndState(0.0, targetPose.get().getRotation()));
-        path.preventFlipping = true;
-        
-        return AutoBuilder.followPath(path);
-    }
-
     public static Command pointToSpotDriveCommand(Supplier<Pose2d> currentPose, Supplier<Pose2d> targetPose)
     {
         PathConstraints constraints = new PathConstraints(2.0, 1.0, Units.degreesToRadians(360), Units.degreesToRadians(360));
+
+        Rotation2d pathTangent = new Rotation2d(
+            targetPose.get().getX() - currentPose.get().getX(),
+            targetPose.get().getY() - currentPose.get().getY()
+        );
+
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                                    new Pose2d(currentPose.get().getTranslation(), currentPose.get().getRotation()),
-                                    new Pose2d(targetPose.get().getTranslation(), targetPose.get().getRotation()));          
+                                    new Pose2d(currentPose.get().getTranslation(), pathTangent),
+                                    new Pose2d(targetPose.get().getTranslation(), pathTangent));          
 
         double vxMetersPerSecond = drivetrain.getState().Speeds.vxMetersPerSecond;
         double vyMetersPerSecond = drivetrain.getState().Speeds.vyMetersPerSecond;
@@ -759,13 +735,14 @@ public final class GeneralCommands
         double velocity = Math.sqrt(vxMetersPerSecond * vxMetersPerSecond + vyMetersPerSecond * vyMetersPerSecond);
 
         Rotation2d rotation = drivetrain.getPose().getRotation();
+        
 
         // NOT CORRECT VALUES
         double startZone = 0.0;
-        double endZone = 0.0;
+        double endZone = 1.0;
 
         PointTowardsZone pointZone = new PointTowardsZone(
-            "zone", targetPose.get().getTranslation(), targetPose.get().getRotation(), startZone, endZone);
+            "reefZone", targetPose.get().getTranslation(), targetPose.get().getRotation(), startZone, endZone);
 
         List<PointTowardsZone> pointTowardsZones = List.of(pointZone);
 
