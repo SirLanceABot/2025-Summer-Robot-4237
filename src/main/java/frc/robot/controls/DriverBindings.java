@@ -23,6 +23,8 @@ import frc.robot.subsystems.IntakeWrist;
 import frc.robot.subsystems.IntakeWrist.Position;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.PracticePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public final class DriverBindings {
@@ -145,7 +147,7 @@ public final class DriverBindings {
         // bButton.onTrue(new DeferredCommand(() -> GeneralCommands.driveToPositionCommand(new Pose2d(1.5, 1.5, new Rotation2d(Math.toRadians(-30))), currentPose.get()), Set.of(drivetrain)));
         //applyRequest(() -> 
         // drivetrain.point.withModuleDirection(new Rotation2d(-leftYAxis.getAsDouble(), -leftXAxis.getAsDouble()))));
-        bButton.onTrue(new DeferredCommand( () -> ScoringCommands.anEvenBetterSuperDuperAutoAlignL4Command(() -> poseEstimator.closestBranchLocationSides(poseEstimator.getIsRightBranch()), () -> (poseEstimator.getWayPointThing()), () -> (drivetrain.getState().Pose)), Set.of(drivetrain)));
+        bButton.onTrue(new DeferredCommand( () -> GeneralCommands.pointToSpotDriveCommand(() -> new Pose2d(15.296, 4.05, Rotation2d.fromDegrees(90)), () -> new Pose2d(13.033, 6.333, Rotation2d.fromDegrees(180)), () -> (drivetrain.getState().Pose)), Set.of(drivetrain)));
     }
 
 
