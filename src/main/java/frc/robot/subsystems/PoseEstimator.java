@@ -628,7 +628,21 @@ public class PoseEstimator extends SubsystemLance
     {
         return runOnce(() -> setPlacingFaceToS6());
     }
-        
+
+
+
+    // EVERYTHING BELOW THIS LINE BEFORE PERIODIC IS TESTING FOR 2026
+    Pose2d redHubPose = new Pose2d(new Translation2d(11.92, 4.030), new Rotation2d(0));
+    Pose2d blueHubPose = new Pose2d(new Translation2d(4.62, 4.030), new Rotation2d(0));
+
+    public double getAngleToRedHub()
+    {
+        Pose2d robotPose = drivetrain.getState().Pose;
+        double deltay = redHubPose.getY() - robotPose.getY();
+        double deltax = redHubPose.getX() - robotPose.getX();
+        double rotation = Math.toDegrees(Math.atan(deltay/deltax));
+        return rotation;
+    }
   
 
     // public Pose2d closestAprilTag()
