@@ -83,7 +83,12 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
     //Point the wheels at a specific angle
     private static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private static final SwerveRequest.FieldCentricFacingAngle angleLockDrive = new SwerveRequest.FieldCentricFacingAngle();
+    private static final SwerveRequest.FieldCentricFacingAngle angleLockDrive = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(TunerConstants.MaxDriveSpeed * 0.05)
+            .withRotationalDeadband(0.005) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withMaxAbsRotationalRate(1)
+            .withHeadingPID(3, 0, 0); //Maximum rotational rate
 
 
     /* Swerve requests to apply during SysId characterization */
@@ -316,8 +321,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
 
     public Pose2d getPose()
     {
-        return getState().Pose;
-        
+        return getState().Pose; 
     }
 
   
@@ -375,6 +379,16 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
         resetPose(pose);
     }
 
+    //TODO see which order actually works
+    public void resetForFieldCentric()
+    {
+        getPigeon2().reset();
+        seedFieldCentric();
+       
+        // seedFieldCentric();
+        // getPigeon2().reset();
+    }
+
    
 
 
@@ -418,6 +432,27 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
                 .withRotationalRate((rightXAxis.getAsDouble() * (TunerConstants.MaxAngularRate * setScaleFactor.getAsDouble())) / 1.0)
         );
     }
+
+
+    /**
+     * Returns a command that will drive the robot while keeping it locked at a specific angle
+     * @param leftYAxis the left Y axis of the controller
+     * @param leftXAxis left X axis of the controller
+     * @param setScaleFactor decimal number that reduces drive speed
+     * @param lockAngle angle to lock the robot's rotation at in radians
+     * @author Matthew Fontecchio
+     */
+    public Command angleLockDriveCommand(DoubleSupplier leftYAxis, DoubleSupplier leftXAxis, DoubleSupplier setScaleFactor, DoubleSupplier lockAngleRadians)
+    {
+        return applyRequest(
+            () -> angleLockDrive
+                .withVelocityX(leftYAxis.getAsDouble() * (TunerConstants.MaxDriveSpeed * (setScaleFactor.getAsDouble() >= 1.0 ? 1.0:setScaleFactor.getAsDouble()) ) )
+                .withVelocityY(leftXAxis.getAsDouble() * (TunerConstants.MaxDriveSpeed * (setScaleFactor.getAsDouble() >= 1.0 ? 1.0:setScaleFactor.getAsDouble()) ) )
+                .withTargetDirection(new Rotation2d(lockAngleRadians.getAsDouble()))
+                .withTargetRateFeedforward(0)
+        );   
+    }
+
 
     /**
      * Returns a command that will point the robot's wheels in a specified direction
@@ -507,6 +542,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
     @Override
     public void periodic() 
     {
+        System.out.println("Angle: " + getPigeon2().getYaw().getValueAsDouble());
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.

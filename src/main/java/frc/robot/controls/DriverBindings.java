@@ -7,6 +7,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -50,6 +51,7 @@ public final class DriverBindings {
     private static DoubleSupplier rightXAxis;
     private static DoubleSupplier scaleFactorSupplier;
     private static double scaleFactor = 0.5;
+    private static DoubleSupplier setAngle;
 
     private static BooleanSupplier isTeleop;
     private static DoubleSupplier matchTime;
@@ -101,6 +103,7 @@ public final class DriverBindings {
             configRightStick();
             configDpadUp();
             configDpadDown(); 
+            configDriving();
             
             configRumble(3);
             configDefaultCommands();
@@ -115,6 +118,7 @@ public final class DriverBindings {
         leftXAxis = () -> -controller.getRawAxis(0);
         rightXAxis = () -> -controller.getRawAxis(4);
         scaleFactorSupplier = () -> scaleFactor;
+        setAngle = () -> Math.PI / 4.0;
 
         // isTeleop = () -> DriverStation.isTeleopEnabled();
         // matchTime = () -> DriverStation.getMatchTime();
@@ -123,9 +127,9 @@ public final class DriverBindings {
 
     private static void configAButton()
     {
-        Trigger aButton = controller.a();
+        // Trigger aButton = controller.a();
         // aButton.onTrue(claw.moveSticktoSetPositionCommand(1.9));
-        aButton.whileTrue(ScoringCommands.autoRemoveAlgaeCommand((() -> drivetrain.getState().Pose), (() -> poseEstimator.closestBranchLocation(() -> poseEstimator.getPrimaryTagID(), poseEstimator.getIsRightBranch()))));
+        // aButton.whileTrue(ScoringCommands.autoRemoveAlgaeCommand((() -> drivetrain.getState().Pose), (() -> poseEstimator.closestBranchLocation(() -> poseEstimator.getPrimaryTagID(), poseEstimator.getIsRightBranch()))));
         // if(intakeWrist != null)
         // {
         //     aButton.onTrue(GeneralCommands.moveIntakeForClimbCommand());
@@ -203,7 +207,7 @@ public final class DriverBindings {
     {
         Trigger startButton = controller.start();
         startButton
-            .onTrue(Commands.runOnce(() -> drivetrain.seedFieldCentric(), drivetrain));
+            .onTrue(Commands.runOnce(() -> drivetrain.resetForFieldCentric(), drivetrain));
     }
 
 
@@ -267,18 +271,20 @@ public final class DriverBindings {
         .onFalse( Commands.runOnce(() -> controller.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
     }
 
+    public static void configDriving()
+    {
+        Trigger aButton = controller.a();
+
+        aButton
+        .whileTrue( drivetrain.angleLockDriveCommand(leftYAxis, leftXAxis, scaleFactorSupplier, setAngle));
+    }
 
     private static void configDefaultCommands()
     {
+       
         if(drivetrain != null)
         {
-            drivetrain.setDefaultCommand(drivetrain.driveCommand(leftYAxis, leftXAxis, rightXAxis, scaleFactorSupplier));
-               
-            //.applyRequest(() ->
-            //         drivetrain.drive.withVelocityX(leftYAxis.getAsDouble() * (TunerConstants.MaxDriveSpeed / 4.0))// Drive forward with negative Y (forward)
-            //             .withVelocityY(leftXAxis.getAsDouble() * (TunerConstants.MaxDriveSpeed / 4.0)) // Drive left with negative X (left)
-            //             .withRotationalRate(rightXAxis.getAsDouble() * TunerConstants.MaxAngularRate)) // Drive counterclockwise with negative X (left)
-            // );
+            drivetrain.setDefaultCommand(drivetrain.driveCommand(leftYAxis, leftXAxis, rightXAxis, scaleFactorSupplier));     
         }
         
     }    

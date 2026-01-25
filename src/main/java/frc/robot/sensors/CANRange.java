@@ -142,15 +142,15 @@ public class CANRange extends SensorLance
     @Override
     public void periodic()
     {
-        signalStrength = canRange.getSignalStrength().getValue();
-        distance = canRange.getDistance().getValue();
-        isDetected = canRange.getIsDetected().getValue();
-        System.out.println(toString());
+        // signalStrength = canRange.getSignalStrength().getValue();
+        // distance = canRange.getDistance().getValue();
+        // isDetected = canRange.getIsDetected().getValue();
     }
 
     @Override
     public String toString()
     {
+        // return "";
         return "Distance: " + distance + " meters " + " Signal Strength: " + signalStrength + "  Is Detected (within 0.1m): " + isDetected;
     }
 }
