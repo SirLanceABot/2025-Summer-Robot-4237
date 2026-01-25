@@ -71,7 +71,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
 
     //Drive the robot
     private static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(TunerConstants.MaxDriveSpeed * 0.05).withRotationalDeadband(TunerConstants.MaxAngularRate * 0.05) // Add a 5% deadband
+            .withDeadband(TunerConstants.MaxDriveSpeed * 0.1).withRotationalDeadband(TunerConstants.MaxAngularRate * 0.1) // Add a 5% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private static final SwerveRequest.RobotCentric autoDrive = new SwerveRequest.RobotCentric()
@@ -84,11 +84,11 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
     private static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private static final SwerveRequest.FieldCentricFacingAngle angleLockDrive = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(TunerConstants.MaxDriveSpeed * 0.05)
-            .withRotationalDeadband(0.005) // Add a 10% deadband
+            .withDeadband(TunerConstants.MaxDriveSpeed * 0.1)
+            .withRotationalDeadband(0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withMaxAbsRotationalRate(1)
-            .withHeadingPID(3, 0, 0); //Maximum rotational rate
+            .withMaxAbsRotationalRate(7)
+            .withHeadingPID(7, 0, 0); //Maximum rotational rate
 
 
     /* Swerve requests to apply during SysId characterization */
@@ -542,7 +542,7 @@ public class Drivetrain extends TunerSwerveDrivetrain implements Subsystem
     @Override
     public void periodic() 
     {
-        System.out.println("Angle: " + getPigeon2().getYaw().getValueAsDouble());
+        // System.out.println("Angle: " + getPigeon2().getYaw().getValueAsDouble());
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.

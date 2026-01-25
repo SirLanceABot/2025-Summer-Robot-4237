@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import javax.lang.model.util.ElementScanner14;
@@ -635,15 +636,14 @@ public class PoseEstimator extends SubsystemLance
     Pose2d redHubPose = new Pose2d(new Translation2d(11.92, 4.030), new Rotation2d(0));
     Pose2d blueHubPose = new Pose2d(new Translation2d(4.62, 4.030), new Rotation2d(0));
 
-    public double getAngleToRedHub()
+    public DoubleSupplier getAngleToRedHub()
     {
         Pose2d robotPose = drivetrain.getState().Pose;
-        double deltay = redHubPose.getY() - robotPose.getY();
-        double deltax = redHubPose.getX() - robotPose.getX();
-        double rotation = Math.toDegrees(Math.atan(deltay/deltax));
+        DoubleSupplier deltay = () -> (redHubPose.getY() - robotPose.getY());
+        DoubleSupplier deltax = () -> (redHubPose.getX() - robotPose.getX());
+        DoubleSupplier rotation = () -> (Math.atan2((deltay.getAsDouble()), (deltax.getAsDouble())));
         return rotation;
     }
-  
 
     // public Pose2d closestAprilTag()
     // {
@@ -663,6 +663,8 @@ public class PoseEstimator extends SubsystemLance
      * Use this for sensors that need to be read periodically.
      * Use this for data that needs to be logged.
      */
+
+    DoubleSupplier rotationToRed;
     @Override
     public void periodic()
     {
@@ -676,7 +678,7 @@ public class PoseEstimator extends SubsystemLance
             poseEstimator.update(gyroRotation, swerveModulePositions);
         }
         */
-
+        System.out.println("Calculated rotation to hub: " + getAngleToRedHub().getAsDouble());
         for (Camera camera : cameraArray) 
         {
             if (camera != null && drivetrain != null)

@@ -276,7 +276,7 @@ public final class DriverBindings {
         Trigger aButton = controller.a();
 
         aButton
-        .whileTrue( drivetrain.angleLockDriveCommand(leftYAxis, leftXAxis, scaleFactorSupplier, setAngle));
+        .whileTrue( drivetrain.angleLockDriveCommand(leftYAxis, leftXAxis, scaleFactorSupplier, () -> (poseEstimator.getAngleToRedHub().getAsDouble())));
     }
 
     private static void configDefaultCommands()
