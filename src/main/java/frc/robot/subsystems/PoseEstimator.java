@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -643,6 +644,41 @@ public class PoseEstimator extends SubsystemLance
         DoubleSupplier deltax = () -> (redHubPose.getX() - robotPose.getX());
         DoubleSupplier rotation = () -> (Math.atan2((deltay.getAsDouble()), (deltax.getAsDouble())));
         return rotation;
+    }
+
+    public DoubleSupplier getAngleToRedHubUsingVectorMath()
+    {
+        //Current pose of the robot
+        Pose2d roboPose = drivetrain.getState().Pose;
+       
+        //Current Component Velocities of the robot (Field Relative)
+        DoubleSupplier xVelocityField = () -> (drivetrain.getState().Speeds.vxMetersPerSecond * drivetrain.getState().Pose.getRotation().getCos() - drivetrain.getState().Speeds.vyMetersPerSecond * drivetrain.getState().Pose.getRotation().getSin());
+        DoubleSupplier yVelocityField = () -> (drivetrain.getState().Speeds.vxMetersPerSecond * drivetrain.getState().Pose.getRotation().getSin() + drivetrain.getState().Speeds.vyMetersPerSecond * drivetrain.getState().Pose.getRotation().getCos());
+
+        //Component Distances from the hub (Field Relative)
+        DoubleSupplier deltay = () -> (redHubPose.getY() - roboPose.getY());
+        DoubleSupplier deltax = () -> (redHubPose.getX() - roboPose.getX());
+
+        //Absolute Distance from the hub
+        DoubleSupplier distanceFromHub = () -> Math.sqrt(Math.pow(deltax.getAsDouble(), 2) + Math.pow(deltay.getAsDouble(), 2));
+
+        //Rotation the robot must be at to face the hub (Field Relative)
+        DoubleSupplier rotation = () -> (Math.atan2((deltay.getAsDouble()), (deltax.getAsDouble())));
+        
+        //Current Component Velocities of the robot (Hub Relative)
+        DoubleSupplier hubRelativeHorizontal = () -> (xVelocityField.getAsDouble() * Math.cos(rotation.getAsDouble()) - yVelocityField.getAsDouble() * Math.sin(rotation.getAsDouble()));
+        DoubleSupplier hubRelativeVertical = () -> (xVelocityField.getAsDouble() * Math.sin(rotation.getAsDouble()) + yVelocityField.getAsDouble() * Math.cos(rotation.getAsDouble()));
+
+        //TODO this part requrires a data table or function that tells you what speed to shoot fuel at depending on distance from hub
+        //Calculates speed to shoot at based on distance map, current hubRelativeVertical velocity, and current hubRelativeHorizonatl velocity
+        // DoubleSupplier shooterVerticalVelocity = () -> (dataTableValueMethodThatTellsYouWhatSpeedToShootFuelAtDependingOnDistanceFromHub(distanceFromHub) - hubRelativeVertical.getAsDouble());
+        // DoubleSupplier actualShooterVelocity = () -> Math.sqrt(Math.pow(shooterVerticalVelocity.getAsDouble(), 2) + Math.pow(hubRelativeHorizontal.getAsDouble(), 2));        
+
+        //Calculates angle based on hubRelativeHorizontal velocity and shooterVerticalVelocity
+        // DoubleSupplier angleToHub = () -> (rotation.getAsDouble() + Math.atan2(hubRelativeHorizontal.getAsDouble(), shooterVerticalVelocity.getAsDouble()));
+
+        //Temporarily makes code happy
+        return () -> 0.0;
     }
 
     // public Pose2d closestAprilTag()
