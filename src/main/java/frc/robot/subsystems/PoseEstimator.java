@@ -652,33 +652,39 @@ public class PoseEstimator extends SubsystemLance
         Pose2d roboPose = drivetrain.getState().Pose;
        
         //Current Component Velocities of the robot (Field Relative)
-        DoubleSupplier xVelocityField = () -> (drivetrain.getState().Speeds.vxMetersPerSecond * drivetrain.getState().Pose.getRotation().getCos() - drivetrain.getState().Speeds.vyMetersPerSecond * drivetrain.getState().Pose.getRotation().getSin());
-        DoubleSupplier yVelocityField = () -> (drivetrain.getState().Speeds.vxMetersPerSecond * drivetrain.getState().Pose.getRotation().getSin() + drivetrain.getState().Speeds.vyMetersPerSecond * drivetrain.getState().Pose.getRotation().getCos());
+        DoubleSupplier xVelocityField = () -> (drivetrain.getState().Speeds.vxMetersPerSecond * Math.abs(drivetrain.getState().Pose.getRotation().getCos()) - drivetrain.getState().Speeds.vyMetersPerSecond * Math.abs(drivetrain.getState().Pose.getRotation().getSin()));
+        DoubleSupplier yVelocityField = () -> (drivetrain.getState().Speeds.vxMetersPerSecond * Math.abs(drivetrain.getState().Pose.getRotation().getSin()) + drivetrain.getState().Speeds.vyMetersPerSecond * Math.abs(drivetrain.getState().Pose.getRotation().getCos()));
 
         //Component Distances from the hub (Field Relative)
         DoubleSupplier deltay = () -> (redHubPose.getY() - roboPose.getY());
         DoubleSupplier deltax = () -> (redHubPose.getX() - roboPose.getX());
 
-        //Absolute Distance from the hub
+        //Absolute Distance from the hub (would theoretically be used if we had a distance-speed shot map)
         DoubleSupplier distanceFromHub = () -> Math.sqrt(Math.pow(deltax.getAsDouble(), 2) + Math.pow(deltay.getAsDouble(), 2));
 
         //Rotation the robot must be at to face the hub (Field Relative)
         DoubleSupplier rotation = () -> (Math.atan2((deltay.getAsDouble()), (deltax.getAsDouble())));
         
         //Current Component Velocities of the robot (Hub Relative)
-        DoubleSupplier hubRelativeHorizontal = () -> (xVelocityField.getAsDouble() * Math.cos(rotation.getAsDouble()) - yVelocityField.getAsDouble() * Math.sin(rotation.getAsDouble()));
-        DoubleSupplier hubRelativeVertical = () -> (xVelocityField.getAsDouble() * Math.sin(rotation.getAsDouble()) + yVelocityField.getAsDouble() * Math.cos(rotation.getAsDouble()));
+        DoubleSupplier hubRelativeHorizontal = () -> (xVelocityField.getAsDouble() * Math.abs(Math.cos(rotation.getAsDouble())) - yVelocityField.getAsDouble() * Math.abs(Math.sin(rotation.getAsDouble())));
+        DoubleSupplier hubRelativeVertical = () -> (xVelocityField.getAsDouble() * Math.abs(Math.sin(rotation.getAsDouble())) + yVelocityField.getAsDouble() * Math.abs(Math.cos(rotation.getAsDouble())));
 
         //TODO this part requrires a data table or function that tells you what speed to shoot fuel at depending on distance from hub
         //Calculates speed to shoot at based on distance map, current hubRelativeVertical velocity, and current hubRelativeHorizonatl velocity
         // DoubleSupplier shooterVerticalVelocity = () -> (dataTableValueMethodThatTellsYouWhatSpeedToShootFuelAtDependingOnDistanceFromHub(distanceFromHub) - hubRelativeVertical.getAsDouble());
         // DoubleSupplier actualShooterVelocity = () -> Math.sqrt(Math.pow(shooterVerticalVelocity.getAsDouble(), 2) + Math.pow(hubRelativeHorizontal.getAsDouble(), 2));        
 
-        //Calculates angle based on hubRelativeHorizontal velocity and shooterVerticalVelocity
-        // DoubleSupplier angleToHub = () -> (rotation.getAsDouble() + Math.atan2(hubRelativeHorizontal.getAsDouble(), shooterVerticalVelocity.getAsDouble()));
 
-        //Temporarily makes code happy
-        return () -> 0.0;
+        //Temporary shot velocity b/c we don't have a distance-speed shot map
+        DoubleSupplier tempVerticalVelocity = () -> 5.0 - hubRelativeVertical.getAsDouble();
+        DoubleSupplier tempActualShooterVelocity = () -> Math.sqrt(Math.pow(tempVerticalVelocity.getAsDouble(), 2) + Math.pow(hubRelativeHorizontal.getAsDouble(), 2));     
+        
+        //Calculates angle based on hubRelativeHorizontal velocity and shooterVerticalVelocity
+        DoubleSupplier angleOffsetToHub = () -> (rotation.getAsDouble() - Math.atan2(hubRelativeHorizontal.getAsDouble(), tempVerticalVelocity.getAsDouble()));
+
+
+        //sends angle offset
+        return () -> angleOffsetToHub.getAsDouble();
     }
 
     // public Pose2d closestAprilTag()
@@ -714,7 +720,8 @@ public class PoseEstimator extends SubsystemLance
             poseEstimator.update(gyroRotation, swerveModulePositions);
         }
         */
-        System.out.println("Calculated rotation to hub: " + getAngleToRedHub().getAsDouble());
+        // System.out.println("Still: " + (getAngleToRedHub().getAsDouble() / Math.PI * 180));
+        // System.out.println("Vector: " + (getAngleToRedHubUsingVectorMath().getAsDouble() / Math.PI * 180));
         for (Camera camera : cameraArray) 
         {
             if (camera != null && drivetrain != null)
