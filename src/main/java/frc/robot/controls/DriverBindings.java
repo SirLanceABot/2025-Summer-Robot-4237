@@ -103,7 +103,7 @@ public final class DriverBindings {
             configRightStick();
             configDpadUp();
             configDpadDown(); 
-            configDriving();
+            // configDriving();
             
             configRumble(3);
             configDefaultCommands();
@@ -127,13 +127,22 @@ public final class DriverBindings {
 
     private static void configAButton()
     {
-        // Trigger aButton = controller.a();
+        Trigger aButton = controller.a();
         // aButton.onTrue(claw.moveSticktoSetPositionCommand(1.9));
         // aButton.whileTrue(ScoringCommands.autoRemoveAlgaeCommand((() -> drivetrain.getState().Pose), (() -> poseEstimator.closestBranchLocation(() -> poseEstimator.getPrimaryTagID(), poseEstimator.getIsRightBranch()))));
         // if(intakeWrist != null)
         // {
         //     aButton.onTrue(GeneralCommands.moveIntakeForClimbCommand());
         // }
+
+        // TESTED AND GOOD
+        // aButton.whileTrue(drivetrain.angleLockDriveCommand(leftYAxis, leftXAxis, scaleFactorSupplier, () -> (poseEstimator.getAngleToAllianceHub().getAsDouble())));
+    
+        // TESTED AND GOOD
+        // aButton.whileTrue(GeneralCommands.shootFromStandstillCommand(drivetrain));
+
+        // TESTED AND WORKS!!!!!!!!
+        aButton.whileTrue(drivetrain.angleLockDriveCommand(leftYAxis, leftXAxis, scaleFactorSupplier, () -> (poseEstimator.getRotationToCalculatedTarget().getAsDouble())));
     }
 
 
@@ -271,13 +280,13 @@ public final class DriverBindings {
         .onFalse( Commands.runOnce(() -> controller.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
     }
 
-    public static void configDriving()
-    {
-        Trigger aButton = controller.a();
+    // public static void configDriving()
+    // {
+    //     Trigger aButton = controller.a();
 
-        aButton
-        .whileTrue( drivetrain.angleLockDriveCommand(leftYAxis, leftXAxis, scaleFactorSupplier, () -> (poseEstimator.getAngleToRedHubUsingVectorMath().getAsDouble())));
-    }
+    //     aButton
+    //     .whileTrue( drivetrain.angleLockDriveCommand(leftYAxis, leftXAxis, scaleFactorSupplier, () -> (poseEstimator.getAngleToRedHubUsingVectorMath().getAsDouble())));
+    // }
 
     private static void configDefaultCommands()
     {

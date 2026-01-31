@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
@@ -173,6 +174,7 @@ public class PoseEstimator extends SubsystemLance
         double[] doubleArray = {0.0, 0.0, 0.0};
 
         fillMaps();
+        configTimeOfFlightMap();
 
         visionStdDevs = new Matrix<N3, N1>(Nat.N3(), Nat.N1(), doubleArray);
         stateStdDevs = new Matrix<N3, N1>(Nat.N3(), Nat.N1(), doubleArray);
@@ -636,6 +638,29 @@ public class PoseEstimator extends SubsystemLance
     // EVERYTHING BELOW THIS LINE BEFORE PERIODIC IS TESTING FOR 2026
     Pose2d redHubPose = new Pose2d(new Translation2d(11.92, 4.030), new Rotation2d(0));
     Pose2d blueHubPose = new Pose2d(new Translation2d(4.62, 4.030), new Rotation2d(0));
+    private final InterpolatingDoubleTreeMap timeOfFlightMap = new InterpolatingDoubleTreeMap();
+
+    public Pose2d getRedHubPose()
+    {
+        return redHubPose;
+    }
+
+    public Pose2d getBlueHubPose()
+    {
+        return blueHubPose;
+    }
+
+    public Pose2d getAllianceHubPose()
+    {
+        if(drivetrain.isRedAllianceSupplier().getAsBoolean())
+        {
+            return getRedHubPose();
+        }
+        else
+        {
+            return getBlueHubPose();
+        }
+    }
 
     public DoubleSupplier getAngleToRedHub()
     {
@@ -644,6 +669,128 @@ public class PoseEstimator extends SubsystemLance
         DoubleSupplier deltax = () -> (redHubPose.getX() - robotPose.getX());
         DoubleSupplier rotation = () -> (Math.atan2((deltay.getAsDouble()), (deltax.getAsDouble())));
         return rotation;
+    }
+
+    public DoubleSupplier getAngleToBlueHub()
+    {
+        Pose2d robotPose = drivetrain.getState().Pose;
+        DoubleSupplier deltay = () -> (blueHubPose.getY() - robotPose.getY());
+        DoubleSupplier deltax = () -> (blueHubPose.getX() - robotPose.getX());
+        DoubleSupplier rotation = () -> (Math.atan2((-deltay.getAsDouble()), (-deltax.getAsDouble())));
+        return rotation;
+    }
+
+    public DoubleSupplier getAngleToAllianceHub()
+    {
+        if(drivetrain.isRedAllianceSupplier().getAsBoolean())
+        {
+            return getAngleToRedHub();
+        }
+        else
+        {
+            return getAngleToBlueHub();
+        }
+    }
+
+    private void configTimeOfFlightMap()
+    {
+        // time of flight map, where the first value is distance to hub in feet, second is time fuel is in the air
+        // TODO test time values once we have robot
+        timeOfFlightMap.put(3.0, 0.70);
+        timeOfFlightMap.put(4.0, 0.75);
+        timeOfFlightMap.put(5.0, 0.775);
+        timeOfFlightMap.put(6.0, 0.80);
+        timeOfFlightMap.put(7.0, 0.825);
+        timeOfFlightMap.put(8.0, 0.85);
+        timeOfFlightMap.put(9.0, 0.875);
+        timeOfFlightMap.put(10.0, 0.90);
+        timeOfFlightMap.put(11.0, 0.925);
+        timeOfFlightMap.put(12.0, 0.95);
+        timeOfFlightMap.put(13.0, 0.975);
+        timeOfFlightMap.put(14.0, 1.0);
+        timeOfFlightMap.put(15.0, 1.025);
+        timeOfFlightMap.put(16.0, 1.05);
+        timeOfFlightMap.put(17.0, 1.075);
+        timeOfFlightMap.put(18.0, 1.10);
+        timeOfFlightMap.put(19.0, 1.125);
+        timeOfFlightMap.put(20.0, 1.15);
+    }
+
+    public double getTOF(double dist)
+    {
+        dist = Math.max(4.0, Math.min(20.0, dist));
+        return timeOfFlightMap.get(dist);
+    }
+
+    /**
+     * gets the pose of the calculated target for shoot on the move while the robot is in motion. 
+     * if the robot is not moving, the calculated target should be the same as the actual target (alliance hub)
+     * @return the calculated target translation to shoot at
+     * @author biggie cheese
+     */
+    public Pose2d getCalculatedTargetPose(Pose2d actualTarget, Pose2d robotPose, ChassisSpeeds velocity)
+    {
+        Translation2d targetTranslation = actualTarget.getTranslation();
+        Translation2d robotTranslation = robotPose.getTranslation();
+
+        Translation2d calculatedTargetTranslation = targetTranslation;
+
+        for(int i = 0; i < 3; i++)
+        {
+            double distance = robotTranslation.getDistance(calculatedTargetTranslation);
+
+            double tof = getTOF(distance);
+
+            double xoffset = -tof * velocity.vxMetersPerSecond;
+            double yoffset = -tof * velocity.vyMetersPerSecond;
+
+            calculatedTargetTranslation = new Translation2d(
+                targetTranslation.getX() + xoffset,
+                targetTranslation.getY() + yoffset);
+        }
+
+        return new Pose2d(calculatedTargetTranslation, new Rotation2d());
+    }
+
+    public DoubleSupplier getAngleToRedTarget(Pose2d robotPose, Pose2d target)
+    {
+        DoubleSupplier deltay = () -> (target.getY() - robotPose.getY());
+        DoubleSupplier deltax = () -> (target.getX() - robotPose.getX());
+        return () -> Math.atan2(deltay.getAsDouble(), deltax.getAsDouble());
+    }
+
+    public DoubleSupplier getAngleToBlueTarget(Pose2d robotPose, Pose2d target)
+    {
+        DoubleSupplier deltay = () -> (target.getY() - robotPose.getY());
+        DoubleSupplier deltax = () -> (target.getX() - robotPose.getX());
+        return () -> Math.atan2(-deltay.getAsDouble(), -deltax.getAsDouble());
+    }
+
+    /**
+     * gets the rotation to the calculated target for shoot on the move
+     * @return the target heading, in radians
+     * @author biggie cheese
+     */
+    public DoubleSupplier getRotationToCalculatedTarget()
+    {
+        Pose2d robotPose = drivetrain.getState().Pose;
+        ChassisSpeeds velocity = ChassisSpeeds.fromRobotRelativeSpeeds(drivetrain.getRobotRelativeSpeeds(), robotPose.getRotation());
+
+        Pose2d calculatedTarget = getCalculatedTargetPose(
+            getAllianceHubPose(), 
+            robotPose, 
+            velocity);
+
+        if(drivetrain.isRedAllianceSupplier().getAsBoolean())
+        {
+            DoubleSupplier targetHeading = () -> (getAngleToRedTarget(robotPose, calculatedTarget).getAsDouble());
+            return targetHeading;
+        }
+        else
+        {
+            DoubleSupplier targetHeading = () -> (getAngleToBlueTarget(robotPose, calculatedTarget).getAsDouble());
+            return targetHeading;
+        }
     }
 
     public DoubleSupplier getAngleToRedHubUsingVectorMath()

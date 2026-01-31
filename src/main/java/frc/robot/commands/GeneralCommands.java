@@ -67,6 +67,7 @@ public final class GeneralCommands
     private static Climb climb;
     private static LEDs leds;
     private static Pigeon2 gyro;
+    private static frc.robot.subsystems.PoseEstimator poseEstimator;
     private static Proximity intakeProximity;
     private static Proximity elevatorProximity;
     private static Proximity shooterProximity;
@@ -98,6 +99,7 @@ public final class GeneralCommands
         shooterProximity = robotContainer.getShooterProximity();
         shooterBackupProximity = robotContainer.getBackupShooterProximity();
         drivetrain = robotContainer.getDrivetrain();
+        poseEstimator  = robotContainer.getPoseEstimator();
         camera = robotContainer.getScoringSideCamera();
 
         System.out.println("  Constructor Finished: " + fullClassName);
@@ -651,6 +653,21 @@ public final class GeneralCommands
         else
         {
             return Commands.print("No gyro to reset");
+        }
+    }
+
+    public static Command shootFromStandstillCommand(Drivetrain drivetrain)
+    {
+        if(drivetrain != null)
+        {
+            return
+            drivetrain.lockWheelsCommand().withTimeout(0.1)
+            .andThen(
+                drivetrain.angleLockDriveCommand(() -> 0, () -> 0, () -> 0.05, () -> (poseEstimator.getAngleToAllianceHub().getAsDouble())).withTimeout(0.75));
+        }
+        else
+        {
+            return Commands.none();
         }
     }
 
